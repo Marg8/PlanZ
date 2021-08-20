@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "650880014148",
+    "project_id": "planz8",
+    "storage_bucket": "planz8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:650880014148:android:21f15991a1c4aa9d3f6911",
+        "android_client_info": {
+          "package_name": "com.example.planz"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "650880014148-4vq4nuahh28nsrhoagop93sovidsesoa.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.planz",
+            "certificate_hash": "c497cdeae74f2fc4502027297880c325f72b4beb"
+          }
+        },
+        {
+          "client_id": "650880014148-fvtcabkb3rggrsi5jp38gsfgn0qlq455.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD73ORjygVB-Aq_PuxhnK7zqgj3apwkmMk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "650880014148-fvtcabkb3rggrsi5jp38gsfgn0qlq455.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

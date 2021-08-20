@@ -1,0 +1,17 @@
+{
+	"folders": [
+		{
+			"name": "images",
+			"path": "../Youtube/app_hamburger/images"
+		},
+		{
+			"name": "planz",
+			"path": "."
+		},
+		{
+			"name": "fonts",
+			"path": "../Youtube/app_hamburger/fonts"
+		}
+	],
+	"settings": {}
+}
