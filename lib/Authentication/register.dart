@@ -216,6 +216,7 @@ class _RegisterState extends State<Register> {
       "name": _nameTextEditingController.text.trim(),
       "url": userImageUrl,
       EcommerceApp.userCartList: ["garbaValue"]
+      
     });
 
     await EcommerceApp.sharedPreferences.setString("uid", fUser.uid);

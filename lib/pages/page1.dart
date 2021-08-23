@@ -17,6 +17,7 @@ class TableTest extends StatefulWidget {
 
 class _MyHomePageState extends State<TableTest> {
   HDTRefreshController _hdtRefreshController = HDTRefreshController();
+  
 
   DataBase db;
   List docs = [];
@@ -178,35 +179,29 @@ class _MyHomePageState extends State<TableTest> {
           ),
           child: _getTitleItemWidget('Fecha', 100),
           onPressed: () {}),
-      StreamBuilder<QuerySnapshot>(
-        stream: course,
-        builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-          if (!snapshot.hasError) {
-            return Text("Error");
-          }
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Text("Cargando");
-          }
-          final datat = snapshot.requireData;
-
-          return ListView.builder(
-            itemBuilder: (context, index) {
-              return Text(datat.docs[index]["titulo2"].toString());
-            },
-          );
-        },
-      ),
-      _getTitleItemWidget(columna3, 100),
-      _getTitleItemWidget(columna4, 100),
-      _getTitleItemWidget(columna5, 100),
-      _getTitleItemWidget(columna6, 100),
-      _getTitleItemWidget(columna7, 100),
-      _getTitleItemWidget(columna8, 100),
-      _getTitleItemWidget(columna9, 100),
-      _getTitleItemWidget(columna10, 100),
+      _getTitleItemWidget2(context, "titulo2", 100),
+      _getTitleItemWidget2(context, "titulo3", 100),
+      _getTitleItemWidget2(context, "titulo4", 100),
+      _getTitleItemWidget2(context, "titulo5", 100),
+      _getTitleItemWidget2(context, "titulo6", 100),
+      _getTitleItemWidget2(context, "titulo7", 100),
+      _getTitleItemWidget2(context, "titulo8", 100),
+      _getTitleItemWidget2(context, "titulo9", 100),
+      _getTitleItemWidget2(context, "titulo10", 100),
       _getTitleItemWidget(columna11, 100),
       _getTitleItemWidget(columna12, 100),
       _getTitleItemWidget(columna13, 100),
+
+      // _getTitleItemWidget(columna4, 100),
+      // _getTitleItemWidget(columna5, 100),
+      // _getTitleItemWidget(columna6, 100),
+      // _getTitleItemWidget(columna7, 100),
+      // _getTitleItemWidget(columna8, 100),
+      // _getTitleItemWidget(columna9, 100),
+      // _getTitleItemWidget(columna10, 100),
+      // _getTitleItemWidget(columna11, 100),
+      // _getTitleItemWidget(columna12, 100),
+      // _getTitleItemWidget(columna13, 100),
       // StreamBuilder(
       //   stream: course,
       //   builder: (context, snapshop) {
@@ -246,7 +241,7 @@ class _MyHomePageState extends State<TableTest> {
     return InkWell(
       onTap: () {
         print(label);
-        _mostrarAlerta(context, label);
+
         setState(() {});
       },
       child: Container(
@@ -261,36 +256,38 @@ class _MyHomePageState extends State<TableTest> {
 
   Widget _getTitleItemWidget2(
       BuildContext context, String label, double width) {
-    return InkWell(
-      onTap: () {
-        print(label);
-        _mostrarAlerta(context, label);
-        setState(() {});
-      },
-      child: Container(
-        child: _test(context, docst.map((a) => label.codeUnitAt(0)), label),
-        width: width,
-        height: 56,
-        padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
-        alignment: Alignment.centerLeft,
-      ),
-    );
-  }
+    final course = EcommerceApp.firestore
+        .collection("users")
+        .doc(EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
+        .collection("categorias")
+        .snapshots();
+    return StreamBuilder<QuerySnapshot>(
+      stream: course,
+      builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+        if (snapshot.hasError) {
+          return Text("Error");
+        }
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Text("Titulo");
+        }
+        final datat = snapshot.requireData;
 
-  Widget _test(BuildContext context, index, label) {
-    String myDateTime = (docst[index][label].toString());
-    return InkWell(
-      onTap: () {},
-      child: Container(
-        child: Text(
-          myDateTime,
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        width: 100,
-        height: 52,
-        padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
-        alignment: Alignment.centerLeft,
-      ),
+        return InkWell(
+          onTap: () {
+            _mostrarAlerta(context, label, "A");
+          },
+          child: Container(
+            width: 100,
+            height: 15,
+            child: ListView.builder(
+              itemBuilder: (context, index) {
+                return Text(datat.docs[index][label].toString(),
+                    style: TextStyle(fontWeight: FontWeight.bold));
+              },
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -466,7 +463,10 @@ class _MyHomePageState extends State<TableTest> {
     );
   }
 
-  _mostrarAlerta(BuildContext context, String label) {
+  _mostrarAlerta(BuildContext context, String label, String newtitulo) {
+
+
+        
     showDialog(
       context: context,
       barrierDismissible: true,
@@ -480,9 +480,12 @@ class _MyHomePageState extends State<TableTest> {
               children: <Widget>[
                 TextField(
                   style: TextStyle(color: Colors.black),
-                  onSubmitted: (value) {
-                    label = value;
-                    columna3 = value;
+                  onChanged: (value) {
+                    newtitulo = value;
+                    if (newtitulo.isNotEmpty) {
+                      return changeTitlte(label, newtitulo);
+                      
+                    }
 
                     // _changeValue();
                     setState(() {});
@@ -637,4 +640,27 @@ class DataBase {
       print(e);
     }
   }
+}
+
+Future changeTitlte(String label, String newtitulo) async {
+  WriteBatch batch = EcommerceApp.firestore.batch();
+
+  EcommerceApp.firestore
+      .collection(EcommerceApp.collectionUser)
+      .doc(EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
+      .collection("categorias")
+      .get()
+      .then((querySnapshot) {
+    querySnapshot.docs.forEach((productId) {
+      try {
+        if (productId.exists) {
+          batch.update(productId.reference, {label: newtitulo});
+        }
+      } on FormatException catch (error) {
+        print("The document ${error.source} could not be parsed.");
+        return null;
+      }
+    });
+    return batch.commit();
+  });
 }
