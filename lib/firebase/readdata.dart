@@ -15,14 +15,14 @@ class DataBase {
         for (var doc in querySnapshot.docs.toList()) {
           Map a = {
             "id": doc.id,
-            "ahorro": doc["ahorro"],
-            "luz": doc["luz"],
-            "internet": doc["internet"],
-            "agua": doc["agua"],
-            "semana": doc["semana"],
-            "estado": doc["estado"],
-            "celular": doc["celular"],
-            "diversion": doc["diversion"]
+            "columna2": doc["ahorro"],
+            "columna3": doc["luz"],
+            "columna4": doc["internet"],
+            "columna5": doc["agua"],
+            "columna1": doc["semana"],
+            "columna7": doc["estado"],
+            "columna8": doc["celular"],
+            "columna9": doc["diversion"]
           };
           docs.add(a);
         }
