@@ -17,7 +17,6 @@ class TableTest extends StatefulWidget {
 
 class _MyHomePageState extends State<TableTest> {
   HDTRefreshController _hdtRefreshController = HDTRefreshController();
-  
 
   DataBase db;
   List docs = [];
@@ -41,6 +40,9 @@ class _MyHomePageState extends State<TableTest> {
   static const int sortStatus = 1;
   bool isAscending = true;
   int sortType = sortName;
+  String newDate = "";
+  String _fecha = "";
+  TextEditingController _inputFieldDateController = new TextEditingController();
 
   @override
   void initState() {
@@ -106,6 +108,14 @@ class _MyHomePageState extends State<TableTest> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        actions: [
+          IconButton(
+              onPressed: () {
+                _mostrarAlertaAddDate(context);
+              },
+              icon: Icon(Icons.calendar_today_outlined)),
+          IconButton(onPressed: () {}, icon: Icon(Icons.add))
+        ],
         title: Text("PLAN Z"),
       ),
       body: _getBodyWidget(db),
@@ -167,11 +177,11 @@ class _MyHomePageState extends State<TableTest> {
   }
 
   List<Widget> _getTitleWidget(BuildContext context) {
-    final course = EcommerceApp.firestore
-        .collection("users")
-        .doc(EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
-        .collection("categorias")
-        .snapshots();
+    // final course = EcommerceApp.firestore
+    //     .collection("users")
+    //     .doc(EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
+    //     .collection("categorias")
+    //     .snapshots();
     return [
       TextButton(
           style: TextButton.styleFrom(
@@ -270,7 +280,7 @@ class _MyHomePageState extends State<TableTest> {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Text("Titulo");
         }
-        final datat = snapshot.requireData;
+        // final datat = snapshot.requireData;
 
         return InkWell(
           onTap: () {
@@ -281,8 +291,11 @@ class _MyHomePageState extends State<TableTest> {
             height: 15,
             child: ListView.builder(
               itemBuilder: (context, index) {
-                return Text(datat.docs[index][label].toString(),
-                    style: TextStyle(fontWeight: FontWeight.bold));
+                print(index);
+                return index.isNaN
+                    ? "a"
+                    : Text(snapshot.data.docs[index][label].toString(),
+                        style: TextStyle(fontWeight: FontWeight.bold));
               },
             ),
           ),
@@ -296,6 +309,7 @@ class _MyHomePageState extends State<TableTest> {
     return InkWell(
       onTap: () {
         print(DateFormat.yMMMd().format(myDateTime));
+        print(myDateTime);
       },
       child: Container(
         child: Text(
@@ -310,12 +324,13 @@ class _MyHomePageState extends State<TableTest> {
     );
   }
 
-  Widget _generateRightHandSideColumnRow(BuildContext context, int index) {
+  Widget _generateRightHandSideColumnRow(BuildContext context, index) {
     return Row(
       children: <Widget>[
         InkWell(
           onTap: () {
-            print(docst[index]["titulo2"]);
+            print(docs[index]["columna2"]);
+            print(index);
           },
           child: Container(
             child: Row(
@@ -330,6 +345,7 @@ class _MyHomePageState extends State<TableTest> {
         InkWell(
           onTap: () {
             print(docs[index]["columna3"]);
+            print(index);
           },
           child: Container(
             child: Text(docs[index]["columna3"].toString()),
@@ -464,9 +480,6 @@ class _MyHomePageState extends State<TableTest> {
   }
 
   _mostrarAlerta(BuildContext context, String label, String newtitulo) {
-
-
-        
     showDialog(
       context: context,
       barrierDismissible: true,
@@ -484,7 +497,6 @@ class _MyHomePageState extends State<TableTest> {
                     newtitulo = value;
                     if (newtitulo.isNotEmpty) {
                       return changeTitlte(label, newtitulo);
-                      
                     }
 
                     // _changeValue();
@@ -514,6 +526,114 @@ class _MyHomePageState extends State<TableTest> {
             ]);
       },
     );
+  }
+
+  _mostrarAlertaAddDate(
+    BuildContext context,
+  ) {
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (context) {
+        return AlertDialog(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20.0)),
+            title: Text("Nueva Fecha"),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                TextField(
+                  enableInteractiveSelection: false,
+                  controller: _inputFieldDateController,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20.0)),
+                    hintText: "2021-08-12",
+                    labelText: "Fecha de naciemiento",
+                    suffixIcon: Icon(Icons.perm_contact_calendar),
+                    icon: Icon(Icons.calendar_today),
+                  ),
+                  onSubmitted: (value) {
+                    _inputFieldDateController.text = value;
+                    setState(() {});
+                    
+                  },
+                ),
+              ],
+            ),
+            actions: <Widget>[
+              FlatButton(
+                child: Text("Cancelar"),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+              FlatButton(
+                child: Text("OK"),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  saveUserInfoToFireStore(context);
+                },
+              ),
+            ]);
+      },
+    );
+  }
+
+  //  Widget _crearFecha(contex) {
+  //   return TextField(
+  //     enableInteractiveSelection: false,
+  //     controller: _inputFieldDateController,
+  //     decoration: InputDecoration(
+  //       border: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0)),
+  //       hintText: "Fecha de naciemiento",
+  //       labelText: "Fecha de naciemiento",
+  //       suffixIcon: Icon(Icons.perm_contact_calendar),
+  //       icon: Icon(Icons.calendar_today),
+  //     ),
+  //     onTap: () {
+  //       FocusScope.of(context).requestFocus(new FocusNode());
+
+  //       _selectDate(context);
+  //     },
+  //   );
+  // }
+
+  Future saveUserInfoToFireStore(context) async {
+    var dDay = DateTime.parse(_inputFieldDateController.text + " 00:00:00.000");
+    EcommerceApp.firestore
+        .collection(EcommerceApp.collectionUser)
+        .doc(EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
+        .collection("date")
+        .doc()
+        .set({
+      "columna1": dDay,
+      "columna2": 0.toInt(),
+      "columna3": 0.toInt(),
+      "columna4": 0.toInt(),
+      "columna5": 0.toInt(),
+      "columna6": 0.toInt(),
+      "columna7": 0.toInt(),
+      "columna8": 0.toInt(),
+      "columna9": 0.toInt(),
+      "columna10": 0.toInt(),
+      "columna11": 0.toInt(),
+      "columna12": 0.toInt(),
+      "columna13": 0.toInt(),
+    });
+  }
+
+  _selectDate(BuildContext context) async {
+    DateTime picked = await showDatePicker(
+        context: context,
+        initialDate: new DateTime.now(),
+        firstDate: new DateTime(2018),
+        lastDate: new DateTime(2025),
+        locale: Locale("es"));
+    if (picked != null) {
+      setState(() {
+        _fecha = picked.toString();
+        _inputFieldDateController.text = _fecha;
+      });
+    }
   }
 }
 
@@ -582,11 +702,11 @@ class DataBase {
           .collection("users")
           .doc(EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
           .collection("date")
+          .orderBy("columna1", descending: false)
           .get();
       if (querySnapshot.docs.isNotEmpty) {
         for (var doc in querySnapshot.docs.toList()) {
           Map a = {
-            "id": doc.id,
             "columna1": doc["columna1"],
             "columna2": doc["columna2"],
             "columna3": doc["columna3"],
@@ -643,6 +763,29 @@ class DataBase {
 }
 
 Future changeTitlte(String label, String newtitulo) async {
+  WriteBatch batch = EcommerceApp.firestore.batch();
+
+  EcommerceApp.firestore
+      .collection(EcommerceApp.collectionUser)
+      .doc(EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
+      .collection("categorias")
+      .get()
+      .then((querySnapshot) {
+    querySnapshot.docs.forEach((productId) {
+      try {
+        if (productId.exists) {
+          batch.update(productId.reference, {label: newtitulo});
+        }
+      } on FormatException catch (error) {
+        print("The document ${error.source} could not be parsed.");
+        return null;
+      }
+    });
+    return batch.commit();
+  });
+}
+
+Future addDateData(String label, String newtitulo) async {
   WriteBatch batch = EcommerceApp.firestore.batch();
 
   EcommerceApp.firestore

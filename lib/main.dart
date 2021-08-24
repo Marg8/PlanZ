@@ -47,6 +47,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (c) => AddressChanger()),
         ChangeNotifierProvider(create: (c) => TotalAmount()),
         ChangeNotifierProvider(create: (c) => OrderNumberNotifier()),
+        
       ],
       child: MaterialApp(
         theme: ThemeData(
