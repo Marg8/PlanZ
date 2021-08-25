@@ -2,6 +2,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:horizontal_data_table/horizontal_data_table.dart';
 import 'package:intl/intl.dart';
+import 'package:planz/Authentication/authenication.dart';
 import 'package:planz/Config/config.dart';
 import 'package:planz/Models/dates.dart';
 import 'package:planz/Orders/placeOrderPayment.dart';
@@ -36,13 +37,13 @@ class _MyHomePageState extends State<TableTest> {
         });
   }
 
-  static const int sortName = 0;
-  static const int sortStatus = 1;
+  TextEditingController _inputFieldDateController = new TextEditingController();
+  // static const int sortName = 0;
+  // static const int sortStatus = 1;
   bool isAscending = true;
-  int sortType = sortName;
+  // int sortType = sortName;
   String newDate = "";
   String _fecha = "";
-  TextEditingController _inputFieldDateController = new TextEditingController();
 
   @override
   void initState() {
@@ -65,44 +66,7 @@ class _MyHomePageState extends State<TableTest> {
   String columna12 = "Total de gastos";
   String columna13 = "Balance";
 
-  // _changeValue() async {
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-
-  //   prefs.setString("columna2", columna2);
-  //   prefs.setString("columna3", columna3);
-  //   prefs.setString("columna4", columna4);
-  //   prefs.setString("columna5", columna5);
-  //   prefs.setString("columna6", columna6);
-  //   prefs.setString("columna7", columna7);
-  //   prefs.setString("columna8", columna8);
-  //   prefs.setString("columna9", columna9);
-  //   prefs.setString("columna10", columna10);
-  //   // prefs.setString("columna11", columna11);
-  //   // prefs.setString("columna12", columna12);
-  //   // prefs.setString("columna13", columna13);
-
-  //   setState(() {
-  //     columna2 = columna2;
-  //   });
-  // }
-
-  // _cargarReferencias() async {
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   setState(() {
-  //     columna2 = prefs.getString("columna2") ?? "Titulo";
-  //     columna3 = prefs.getString("columna3") ?? "Titulo";
-  //     columna4 = prefs.getString("columna4") ?? "Titulo";
-  //     columna5 = prefs.getString("columna5")?? "Titulo";
-  //     columna6 = prefs.getString("columna6") ?? "Titulo";
-  //     columna7 = prefs.getString("columna7") ?? "Titulo";
-  //     columna8 = prefs.getString("columna8") ?? "Titulo";
-  //     columna9 = prefs.getString("columna9") ?? "Titulo";
-  //     columna10 = prefs.getString("columna1") ?? "Titulo";
-  //     // columna11 = prefs.getString("columna11") ?? "Titulo";
-  //     // columna12 = prefs.getString("columna12") ?? "Titulo";
-  //     // columna13 = prefs.getString("columna13") ?? "Titulo";
-  //   });
-  // }
+  Route route = MaterialPageRoute(builder: (c) => DatePicker());
 
   @override
   Widget build(BuildContext context) {
@@ -111,15 +75,70 @@ class _MyHomePageState extends State<TableTest> {
         actions: [
           IconButton(
               onPressed: () {
-                _mostrarAlertaAddDate(context);
+                _selectDate(context);
               },
               icon: Icon(Icons.calendar_today_outlined)),
-          IconButton(onPressed: () {}, icon: Icon(Icons.add))
+          IconButton(
+              onPressed: () {
+                EcommerceApp.auth.signOut().then((c) {
+                  Route route =
+                      MaterialPageRoute(builder: (c) => AuthenticScreen());
+                  Navigator.push(context, route);
+                });
+              },
+              icon: Icon(Icons.add))
         ],
         title: Text("PLAN Z"),
       ),
       body: _getBodyWidget(db),
     );
+  }
+
+  Future _selectDate(BuildContext context) async {
+    DateTime picked = await showDatePicker(
+      context: context,
+      initialDate: new DateTime.now(),
+      firstDate: new DateTime(2018),
+      lastDate: new DateTime(2025),
+      // locale: Locale("es")
+    );
+    if (picked != null) {
+      setState(() {
+        _fecha = picked.toString();
+        _inputFieldDateController.text = _fecha;
+      });
+
+      saveUserInfoToFireStore(context);
+    }
+  }
+
+  Future saveUserInfoToFireStore(context) async {
+    var dDay = DateTime.parse(_inputFieldDateController.text);
+    EcommerceApp.firestore
+        .collection(EcommerceApp.collectionUser)
+        .doc(EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
+        .collection("date")
+        .doc()
+        .set({
+      "columna1": dDay,
+      "columna2": 0.toInt(),
+      "columna3": 0.toInt(),
+      "columna4": 0.toInt(),
+      "columna5": 0.toInt(),
+      "columna6": 0.toInt(),
+      "columna7": 0.toInt(),
+      "columna8": 0.toInt(),
+      "columna9": 0.toInt(),
+      "columna10": 0.toInt(),
+      "columna11": 0.toInt(),
+      "columna12": 0.toInt(),
+      "columna13": 0.toInt(),
+    });
+     db.read().then((value) => {
+          setState(() {
+            docs = value;
+          })
+        });
   }
 
   Widget _getBodyWidget(DataBase dataBase) {
@@ -252,7 +271,7 @@ class _MyHomePageState extends State<TableTest> {
       onTap: () {
         print(label);
 
-        setState(() {});
+        // setState(() {});
       },
       child: Container(
         child: Text(label, style: TextStyle(fontWeight: FontWeight.bold)),
@@ -528,55 +547,55 @@ class _MyHomePageState extends State<TableTest> {
     );
   }
 
-  _mostrarAlertaAddDate(
-    BuildContext context,
-  ) {
-    showDialog(
-      context: context,
-      barrierDismissible: true,
-      builder: (context) {
-        return AlertDialog(
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20.0)),
-            title: Text("Nueva Fecha"),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                TextField(
-                  enableInteractiveSelection: false,
-                  controller: _inputFieldDateController,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20.0)),
-                    hintText: "2021-08-12",
-                    labelText: "Fecha de naciemiento",
-                    suffixIcon: Icon(Icons.perm_contact_calendar),
-                    icon: Icon(Icons.calendar_today),
-                  ),
-                  onSubmitted: (value) {
-                    _inputFieldDateController.text = value;
-                    setState(() {});
-                    
-                  },
-                ),
-              ],
-            ),
-            actions: <Widget>[
-              FlatButton(
-                child: Text("Cancelar"),
-                onPressed: () => Navigator.of(context).pop(),
-              ),
-              FlatButton(
-                child: Text("OK"),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  saveUserInfoToFireStore(context);
-                },
-              ),
-            ]);
-      },
-    );
-  }
+  // _mostrarAlertaAddDate(
+  //   BuildContext context,
+  // ) {
+  //   showDialog(
+  //     context: context,
+  //     barrierDismissible: true,
+  //     builder: (context) {
+  //       return AlertDialog(
+  //           shape: RoundedRectangleBorder(
+  //               borderRadius: BorderRadius.circular(20.0)),
+  //           title: Text("Nueva Fecha"),
+  //           content: Column(
+  //             mainAxisSize: MainAxisSize.min,
+  //             children: <Widget>[
+  //               TextField(
+  //                 enableInteractiveSelection: false,
+  //                 controller: _inputFieldDateController,
+  //                 decoration: InputDecoration(
+  //                   border: OutlineInputBorder(
+  //                       borderRadius: BorderRadius.circular(20.0)),
+  //                   hintText: "2021-08-12",
+  //                   labelText: "Fecha de naciemiento",
+  //                   suffixIcon: Icon(Icons.perm_contact_calendar),
+  //                   icon: Icon(Icons.calendar_today),
+  //                 ),
+  //                 onTap: () {
+  //                   FocusScope.of(context).requestFocus(new FocusNode());
+
+  //                   _selectDate(context);
+  //                 },
+  //               ),
+  //             ],
+  //           ),
+  //           actions: <Widget>[
+  //             FlatButton(
+  //               child: Text("Cancelar"),
+  //               onPressed: () => Navigator.of(context).pop(),
+  //             ),
+  //             FlatButton(
+  //               child: Text("OK"),
+  //               onPressed: () {
+  //                 Navigator.of(context).pop();
+  //                 saveUserInfoToFireStore(context);
+  //               },
+  //             ),
+  //           ]);
+  //     },
+  //   );
+  // }
 
   //  Widget _crearFecha(contex) {
   //   return TextField(
@@ -597,44 +616,6 @@ class _MyHomePageState extends State<TableTest> {
   //   );
   // }
 
-  Future saveUserInfoToFireStore(context) async {
-    var dDay = DateTime.parse(_inputFieldDateController.text + " 00:00:00.000");
-    EcommerceApp.firestore
-        .collection(EcommerceApp.collectionUser)
-        .doc(EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
-        .collection("date")
-        .doc()
-        .set({
-      "columna1": dDay,
-      "columna2": 0.toInt(),
-      "columna3": 0.toInt(),
-      "columna4": 0.toInt(),
-      "columna5": 0.toInt(),
-      "columna6": 0.toInt(),
-      "columna7": 0.toInt(),
-      "columna8": 0.toInt(),
-      "columna9": 0.toInt(),
-      "columna10": 0.toInt(),
-      "columna11": 0.toInt(),
-      "columna12": 0.toInt(),
-      "columna13": 0.toInt(),
-    });
-  }
-
-  _selectDate(BuildContext context) async {
-    DateTime picked = await showDatePicker(
-        context: context,
-        initialDate: new DateTime.now(),
-        firstDate: new DateTime(2018),
-        lastDate: new DateTime(2025),
-        locale: Locale("es"));
-    if (picked != null) {
-      setState(() {
-        _fecha = picked.toString();
-        _inputFieldDateController.text = _fecha;
-      });
-    }
-  }
 }
 
 // User user = User();
@@ -806,4 +787,146 @@ Future addDateData(String label, String newtitulo) async {
     });
     return batch.commit();
   });
+}
+// _changeValue() async {
+//   SharedPreferences prefs = await SharedPreferences.getInstance();
+
+//   prefs.setString("columna2", columna2);
+//   prefs.setString("columna3", columna3);
+//   prefs.setString("columna4", columna4);
+//   prefs.setString("columna5", columna5);
+//   prefs.setString("columna6", columna6);
+//   prefs.setString("columna7", columna7);
+//   prefs.setString("columna8", columna8);
+//   prefs.setString("columna9", columna9);
+//   prefs.setString("columna10", columna10);
+//   // prefs.setString("columna11", columna11);
+//   // prefs.setString("columna12", columna12);
+//   // prefs.setString("columna13", columna13);
+
+//   setState(() {
+//     columna2 = columna2;
+//   });
+// }
+
+// _cargarReferencias() async {
+//   SharedPreferences prefs = await SharedPreferences.getInstance();
+//   setState(() {
+//     columna2 = prefs.getString("columna2") ?? "Titulo";
+//     columna3 = prefs.getString("columna3") ?? "Titulo";
+//     columna4 = prefs.getString("columna4") ?? "Titulo";
+//     columna5 = prefs.getString("columna5")?? "Titulo";
+//     columna6 = prefs.getString("columna6") ?? "Titulo";
+//     columna7 = prefs.getString("columna7") ?? "Titulo";
+//     columna8 = prefs.getString("columna8") ?? "Titulo";
+//     columna9 = prefs.getString("columna9") ?? "Titulo";
+//     columna10 = prefs.getString("columna1") ?? "Titulo";
+//     // columna11 = prefs.getString("columna11") ?? "Titulo";
+//     // columna12 = prefs.getString("columna12") ?? "Titulo";
+//     // columna13 = prefs.getString("columna13") ?? "Titulo";
+//   });
+// }
+
+class DatePicker extends StatefulWidget {
+  @override
+  _DatePickerState createState() => _DatePickerState();
+}
+
+class _DatePickerState extends State<DatePicker> {
+  String _fecha;
+
+  TextEditingController _inputFieldDateController = new TextEditingController();
+  @override
+  Widget build(BuildContext context) {
+    return _mostrarAlertaAddDate(context);
+  }
+
+  _mostrarAlertaAddDate(
+    BuildContext context,
+  ) {
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (context) {
+        return AlertDialog(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20.0)),
+            title: Text("Nueva Fecha"),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                TextField(
+                  enableInteractiveSelection: false,
+                  controller: _inputFieldDateController,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20.0)),
+                    hintText: "2021-08-12",
+                    labelText: "Fecha de naciemiento",
+                    suffixIcon: Icon(Icons.perm_contact_calendar),
+                    icon: Icon(Icons.calendar_today),
+                  ),
+                  onTap: () {
+                    FocusScope.of(context).requestFocus(new FocusNode());
+
+                    _selectDate(context);
+                  },
+                ),
+              ],
+            ),
+            actions: <Widget>[
+              FlatButton(
+                child: Text("Cancelar"),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+              FlatButton(
+                child: Text("OK"),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  saveUserInfoToFireStore(context);
+                },
+              ),
+            ]);
+      },
+    );
+  }
+
+  Future _selectDate(BuildContext context) async {
+    DateTime picked = await showDatePicker(
+        context: context,
+        initialDate: new DateTime.now(),
+        firstDate: new DateTime(2018),
+        lastDate: new DateTime(2025),
+        locale: Locale("es"));
+    if (picked != null) {
+      setState(() {
+        _fecha = picked.toString();
+        _inputFieldDateController.text = _fecha;
+      });
+    }
+  }
+
+  Future saveUserInfoToFireStore(context) async {
+    var dDay = DateTime.parse(_inputFieldDateController.text);
+    EcommerceApp.firestore
+        .collection(EcommerceApp.collectionUser)
+        .doc(EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
+        .collection("date")
+        .doc()
+        .set({
+      "columna1": dDay,
+      "columna2": 0.toInt(),
+      "columna3": 0.toInt(),
+      "columna4": 0.toInt(),
+      "columna5": 0.toInt(),
+      "columna6": 0.toInt(),
+      "columna7": 0.toInt(),
+      "columna8": 0.toInt(),
+      "columna9": 0.toInt(),
+      "columna10": 0.toInt(),
+      "columna11": 0.toInt(),
+      "columna12": 0.toInt(),
+      "columna13": 0.toInt(),
+    });
+  }
 }

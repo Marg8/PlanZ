@@ -23,6 +23,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:planz/pages/page1.dart';
 
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
@@ -50,6 +51,14 @@ class MyApp extends StatelessWidget {
         
       ],
       child: MaterialApp(
+      //   localizationsDelegates: [
+      //   GlobalMaterialLocalizations.delegate,
+      //   GlobalWidgetsLocalizations.delegate,
+      // ],
+      // supportedLocales: [
+      //   const Locale("en", "US"),
+      //   const Locale("es", "ES"),
+      // ],
         theme: ThemeData(
             cardColor: Colors.teal,
             appBarTheme: AppBarTheme(color: Colors.teal, centerTitle: true),

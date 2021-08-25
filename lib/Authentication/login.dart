@@ -8,6 +8,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:planz/pages/page1.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -147,7 +148,7 @@ class _LoginState extends State<Login> {
     if (firebaseUser != null) {
       readData(firebaseUser).then((s) {
         Navigator.pop(context);
-        Route route = MaterialPageRoute(builder: (c) => Hamburger());
+        Route route = MaterialPageRoute(builder: (c) => TableTest());
         Navigator.push(context, route);
       });
     }
