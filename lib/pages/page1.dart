@@ -30,11 +30,11 @@ class _MyHomePageState extends State<TableTest> {
             docs = value;
           })
         });
-    db.readTitle().then((valuet) => {
-          setState(() {
-            docst = valuet;
-          })
-        });
+    // db.readTitle().then((valuet) => {
+    //       setState(() {
+    //         docst = valuet;
+    //       })
+    //     });
   }
 
   TextEditingController _inputFieldDateController = new TextEditingController();
@@ -150,7 +150,7 @@ class _MyHomePageState extends State<TableTest> {
         headerWidgets: _getTitleWidget(context),
         leftSideItemBuilder: _generateFirstColumnRow,
         rightSideItemBuilder: _generateRightHandSideColumnRow,
-        itemCount: docs.length,
+        itemCount: docs.length?? 10,
         rowSeparatorWidget: const Divider(
           color: Colors.black54,
           height: 1.0,
@@ -183,11 +183,11 @@ class _MyHomePageState extends State<TableTest> {
                   docs = value;
                 })
               });
-          db.readTitle().then((valuet) => {
-                setState(() {
-                  docst = valuet;
-                })
-              });
+          // db.readTitle().then((valuet) => {
+          //       setState(() {
+          //         docst = valuet;
+          //       })
+          //     });
         },
         htdRefreshController: _hdtRefreshController,
       ),
@@ -297,7 +297,7 @@ class _MyHomePageState extends State<TableTest> {
           return Text("Error");
         }
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Text("Titulo");
+          return circularProgress();
         }
         // final datat = snapshot.requireData;
 
@@ -311,8 +311,8 @@ class _MyHomePageState extends State<TableTest> {
             child: ListView.builder(
               itemBuilder: (context, index) {
                 print(index);
-                return index.isNaN
-                    ? "a"
+                return snapshot.connectionState == ConnectionState.waiting
+                    ? circularProgress()
                     : Text(snapshot.data.docs[index][label].toString(),
                         style: TextStyle(fontWeight: FontWeight.bold));
               },
@@ -711,36 +711,36 @@ class DataBase {
     }
   }
 
-  Future<List> readTitle() async {
-    QuerySnapshot querySnapshot;
-    List docst = [];
-    try {
-      querySnapshot = await firestore
-          .collection("users")
-          .doc(EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
-          .collection("categorias")
-          .get();
-      if (querySnapshot.docs.isNotEmpty) {
-        for (var doc in querySnapshot.docs.toList()) {
-          Map a = {
-            "titulo2": doc["titulo2"],
-            "titulo3": doc["titulo3"],
-            "titulo4": doc["titulo4"],
-            "titulo5": doc["titulo5"],
-            "titulo6": doc["titulo6"],
-            "titulo7": doc["titulo7"],
-            "titulo8": doc["titulo8"],
-            "titulo9": doc["titulo9"],
-            "titulo10": doc["titulo10"],
-          };
-          docst.add(a);
-        }
-        return docst;
-      }
-    } catch (e) {
-      print(e);
-    }
-  }
+  // Future<List> readTitle() async {
+  //   QuerySnapshot querySnapshot;
+  //   List docst = [];
+  //   try {
+  //     querySnapshot = await firestore
+  //         .collection("users")
+  //         .doc(EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
+  //         .collection("categorias")
+  //         .get();
+  //     if (querySnapshot.docs.isNotEmpty) {
+  //       for (var doc in querySnapshot.docs.toList()) {
+  //         Map a = {
+  //           "titulo2": doc["titulo2"],
+  //           "titulo3": doc["titulo3"],
+  //           "titulo4": doc["titulo4"],
+  //           "titulo5": doc["titulo5"],
+  //           "titulo6": doc["titulo6"],
+  //           "titulo7": doc["titulo7"],
+  //           "titulo8": doc["titulo8"],
+  //           "titulo9": doc["titulo9"],
+  //           "titulo10": doc["titulo10"],
+  //         };
+  //         docst.add(a);
+  //       }
+  //       return docst;
+  //     }
+  //   } catch (e) {
+  //     print(e);
+  //   }
+  // }
 }
 
 Future changeTitlte(String label, String newtitulo) async {
