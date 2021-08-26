@@ -44,7 +44,8 @@ class _MyHomePageState extends State<TableTest> {
   // int sortType = sortName;
   String newDate = "";
   String _fecha = "";
-
+  int newvalued = 0;
+  String productId;
   @override
   void initState() {
     // user.initData(100);
@@ -65,8 +66,6 @@ class _MyHomePageState extends State<TableTest> {
   String columna11 = "Ingreso";
   String columna12 = "Total de gastos";
   String columna13 = "Balance";
-
-  Route route = MaterialPageRoute(builder: (c) => DatePicker());
 
   @override
   Widget build(BuildContext context) {
@@ -134,7 +133,7 @@ class _MyHomePageState extends State<TableTest> {
       "columna12": 0.toInt(),
       "columna13": 0.toInt(),
     });
-     db.read().then((value) => {
+    db.read().then((value) => {
           setState(() {
             docs = value;
           })
@@ -150,7 +149,7 @@ class _MyHomePageState extends State<TableTest> {
         headerWidgets: _getTitleWidget(context),
         leftSideItemBuilder: _generateFirstColumnRow,
         rightSideItemBuilder: _generateRightHandSideColumnRow,
-        itemCount: docs.length?? 10,
+        itemCount: docs.length > 1 ? docs.length : 13,
         rowSeparatorWidget: const Divider(
           color: Colors.black54,
           height: 1.0,
@@ -323,6 +322,17 @@ class _MyHomePageState extends State<TableTest> {
     );
   }
 
+  _updateData(BuildContext context, index) {
+    FirebaseFirestore.instance
+        .collection("users")
+        .doc(EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
+        .collection("date")
+        .doc(productId)
+        .update({
+      "columna2": 100,
+    });
+  }
+
   Widget _generateFirstColumnRow(BuildContext context, index) {
     DateTime myDateTime = (docs[index]["columna1"].toDate());
     return InkWell(
@@ -350,6 +360,8 @@ class _MyHomePageState extends State<TableTest> {
           onTap: () {
             print(docs[index]["columna2"]);
             print(index);
+            // _mostrarAlertaUpdateData(context, index);
+            changeData(context);
           },
           child: Container(
             child: Row(
@@ -365,6 +377,7 @@ class _MyHomePageState extends State<TableTest> {
           onTap: () {
             print(docs[index]["columna3"]);
             print(index);
+            changeDatabyWeek(context);
           },
           child: Container(
             child: Text(docs[index]["columna3"].toString()),
@@ -547,55 +560,54 @@ class _MyHomePageState extends State<TableTest> {
     );
   }
 
-  // _mostrarAlertaAddDate(
-  //   BuildContext context,
-  // ) {
-  //   showDialog(
-  //     context: context,
-  //     barrierDismissible: true,
-  //     builder: (context) {
-  //       return AlertDialog(
-  //           shape: RoundedRectangleBorder(
-  //               borderRadius: BorderRadius.circular(20.0)),
-  //           title: Text("Nueva Fecha"),
-  //           content: Column(
-  //             mainAxisSize: MainAxisSize.min,
-  //             children: <Widget>[
-  //               TextField(
-  //                 enableInteractiveSelection: false,
-  //                 controller: _inputFieldDateController,
-  //                 decoration: InputDecoration(
-  //                   border: OutlineInputBorder(
-  //                       borderRadius: BorderRadius.circular(20.0)),
-  //                   hintText: "2021-08-12",
-  //                   labelText: "Fecha de naciemiento",
-  //                   suffixIcon: Icon(Icons.perm_contact_calendar),
-  //                   icon: Icon(Icons.calendar_today),
-  //                 ),
-  //                 onTap: () {
-  //                   FocusScope.of(context).requestFocus(new FocusNode());
-
-  //                   _selectDate(context);
-  //                 },
-  //               ),
-  //             ],
-  //           ),
-  //           actions: <Widget>[
-  //             FlatButton(
-  //               child: Text("Cancelar"),
-  //               onPressed: () => Navigator.of(context).pop(),
-  //             ),
-  //             FlatButton(
-  //               child: Text("OK"),
-  //               onPressed: () {
-  //                 Navigator.of(context).pop();
-  //                 saveUserInfoToFireStore(context);
-  //               },
-  //             ),
-  //           ]);
-  //     },
-  //   );
-  // }
+  _mostrarAlertaUpdateData(
+    BuildContext context,
+    index,
+  ) {
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (context) {
+        return AlertDialog(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20.0)),
+            title: Text("Nueva Fecha"),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                TextField(
+                  enableInteractiveSelection: false,
+                  controller: _inputFieldDateController,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20.0)),
+                    hintText: "2021-08-12",
+                    labelText: "Fecha de naciemiento",
+                    suffixIcon: Icon(Icons.perm_contact_calendar),
+                    icon: Icon(Icons.calendar_today),
+                  ),
+                  onSubmitted: (valued) {
+                    _updateData(context, index);
+                  },
+                ),
+              ],
+            ),
+            actions: <Widget>[
+              FlatButton(
+                child: Text("Cancelar"),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+              FlatButton(
+                child: Text("OK"),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  saveUserInfoToFireStore(context);
+                },
+              ),
+            ]);
+      },
+    );
+  }
 
   //  Widget _crearFecha(contex) {
   //   return TextField(
@@ -615,6 +627,37 @@ class _MyHomePageState extends State<TableTest> {
   //     },
   //   );
   // }
+
+  //Valor para todas las semanas
+  Future changeData(BuildContext context) async {
+    WriteBatch batch = EcommerceApp.firestore.batch();
+
+    EcommerceApp.firestore
+        .collection(EcommerceApp.collectionUser)
+        .doc(EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
+        .collection("date")
+        .get()
+        .then((querySnapshot) {
+      querySnapshot.docs.forEach((productId) {
+        try {
+          if (productId.exists) {
+            batch.update(productId.reference, {"columna2": 800});
+          }
+        } on FormatException catch (error) {
+          print("The document ${error.source} could not be parsed.");
+          return null;
+        }
+      });
+      return batch.commit().then((value) {
+        db.read().then((value) => {
+              setState(() {
+                docs = value;
+              })
+            });
+      });
+    });
+  }
+
 
 }
 
@@ -741,6 +784,7 @@ class DataBase {
   //     print(e);
   //   }
   // }
+
 }
 
 Future changeTitlte(String label, String newtitulo) async {
@@ -766,28 +810,32 @@ Future changeTitlte(String label, String newtitulo) async {
   });
 }
 
-Future addDateData(String label, String newtitulo) async {
-  WriteBatch batch = EcommerceApp.firestore.batch();
 
-  EcommerceApp.firestore
-      .collection(EcommerceApp.collectionUser)
-      .doc(EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
-      .collection("categorias")
-      .get()
-      .then((querySnapshot) {
-    querySnapshot.docs.forEach((productId) {
-      try {
-        if (productId.exists) {
-          batch.update(productId.reference, {label: newtitulo});
-        }
-      } on FormatException catch (error) {
-        print("The document ${error.source} could not be parsed.");
-        return null;
-      }
-    });
-    return batch.commit();
-  });
-}
+
+
+
+// Future addDateData(String label, String newtitulo) async {
+//   WriteBatch batch = EcommerceApp.firestore.batch();
+
+//   EcommerceApp.firestore
+//       .collection(EcommerceApp.collectionUser)
+//       .doc(EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
+//       .collection("categorias")
+//       .get()
+//       .then((querySnapshot) {
+//     querySnapshot.docs.forEach((productId) {
+//       try {
+//         if (productId.exists) {
+//           batch.update(productId.reference, {label: newtitulo});
+//         }
+//       } on FormatException catch (error) {
+//         print("The document ${error.source} could not be parsed.");
+//         return null;
+//       }
+//     });
+//     return batch.commit();
+//   });
+// }
 // _changeValue() async {
 //   SharedPreferences prefs = await SharedPreferences.getInstance();
 
@@ -827,106 +875,28 @@ Future addDateData(String label, String newtitulo) async {
 //   });
 // }
 
-class DatePicker extends StatefulWidget {
-  @override
-  _DatePickerState createState() => _DatePickerState();
-}
+  Future changeDatabyWeek(BuildContext context) async {
+  WriteBatch batch = EcommerceApp.firestore.batch();
 
-class _DatePickerState extends State<DatePicker> {
-  String _fecha;
-
-  TextEditingController _inputFieldDateController = new TextEditingController();
-  @override
-  Widget build(BuildContext context) {
-    return _mostrarAlertaAddDate(context);
-  }
-
-  _mostrarAlertaAddDate(
-    BuildContext context,
-  ) {
-    showDialog(
-      context: context,
-      barrierDismissible: true,
-      builder: (context) {
-        return AlertDialog(
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20.0)),
-            title: Text("Nueva Fecha"),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                TextField(
-                  enableInteractiveSelection: false,
-                  controller: _inputFieldDateController,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20.0)),
-                    hintText: "2021-08-12",
-                    labelText: "Fecha de naciemiento",
-                    suffixIcon: Icon(Icons.perm_contact_calendar),
-                    icon: Icon(Icons.calendar_today),
-                  ),
-                  onTap: () {
-                    FocusScope.of(context).requestFocus(new FocusNode());
-
-                    _selectDate(context);
-                  },
-                ),
-              ],
-            ),
-            actions: <Widget>[
-              FlatButton(
-                child: Text("Cancelar"),
-                onPressed: () => Navigator.of(context).pop(),
-              ),
-              FlatButton(
-                child: Text("OK"),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  saveUserInfoToFireStore(context);
-                },
-              ),
-            ]);
-      },
-    );
-  }
-
-  Future _selectDate(BuildContext context) async {
-    DateTime picked = await showDatePicker(
-        context: context,
-        initialDate: new DateTime.now(),
-        firstDate: new DateTime(2018),
-        lastDate: new DateTime(2025),
-        locale: Locale("es"));
-    if (picked != null) {
-      setState(() {
-        _fecha = picked.toString();
-        _inputFieldDateController.text = _fecha;
-      });
-    }
-  }
-
-  Future saveUserInfoToFireStore(context) async {
-    var dDay = DateTime.parse(_inputFieldDateController.text);
-    EcommerceApp.firestore
-        .collection(EcommerceApp.collectionUser)
-        .doc(EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
-        .collection("date")
-        .doc()
-        .set({
-      "columna1": dDay,
-      "columna2": 0.toInt(),
-      "columna3": 0.toInt(),
-      "columna4": 0.toInt(),
-      "columna5": 0.toInt(),
-      "columna6": 0.toInt(),
-      "columna7": 0.toInt(),
-      "columna8": 0.toInt(),
-      "columna9": 0.toInt(),
-      "columna10": 0.toInt(),
-      "columna11": 0.toInt(),
-      "columna12": 0.toInt(),
-      "columna13": 0.toInt(),
+  EcommerceApp.firestore
+      .collection(EcommerceApp.collectionUser)
+      .doc(EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
+      .collection("date")
+      .get()
+      .then((querySnapshot) {
+    querySnapshot.docs.forEach((productId) {
+      try {
+        if (productId == productId) {
+          batch.update(productId.reference, {"columna3": 1000});
+          if (productId != null) {
+            return batch.commit();
+          }
+        }
+      } on FormatException catch (error) {
+        print("The document ${error.source} could not be parsed.");
+        return null;
+      }
     });
-  }
+    return batch.commit();
+  });
 }
