@@ -1,4 +1,4 @@
-import 'package:planz/Admin/adminLogin.dart';
+
 import 'package:planz/DialogBox/errorDialog.dart';
 import 'package:planz/Config/config.dart';
 import 'package:planz/DialogBox/loadingDialog.dart';
@@ -38,7 +38,7 @@ class _LoginState extends State<Login> {
             Container(
               alignment: Alignment.bottomCenter,
               child: Image.asset(
-                "images/icon/icon.png",
+                "images/icon/bank.png",
                 height: 200.0,
                 width: 200.0,
               ),
@@ -98,8 +98,7 @@ class _LoginState extends State<Login> {
               height: 10.0,
             ),
             FlatButton.icon(
-              onPressed: () => Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => AdminSignInPage())),
+              onPressed: () =>null,
               icon: (Icon(
                 Icons.nature_people,
                 color: Colors.white,

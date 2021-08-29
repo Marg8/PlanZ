@@ -9,6 +9,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:planz/pages/page1.dart';
 
 class Register extends StatefulWidget {
   @override
@@ -203,7 +204,7 @@ class _RegisterState extends State<Register> {
     if (firebaseUser != null) {
       saveUserInfoToFireStore(firebaseUser).then((value) {
         Navigator.pop(context);
-        Route route = MaterialPageRoute(builder: (c) => Hamburger());
+        Route route = MaterialPageRoute(builder: (c) => TableTest());
         Navigator.push(context, route);
       });
     }
