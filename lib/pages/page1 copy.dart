@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:planz/Authentication/authenication.dart';
 import 'package:planz/Config/config.dart';
 import 'package:planz/Models/dates.dart';
+import 'package:planz/Models/valuesModel.dart';
 import 'package:planz/Orders/placeOrderPayment.dart';
 import 'package:planz/Widgets/loadingWidget.dart';
 import 'package:planz/firebase/readdata.dart';
@@ -20,28 +21,22 @@ class _MyHomePageState extends State<TableTest> {
   HDTRefreshController _hdtRefreshController = HDTRefreshController();
 
   DataBase db;
-  List docs = [];
-  List docst = [];
-  List docsid = [];
-  initialise() {
-    db = DataBase();
-    db.initiliase();
-    db.read().then((value) => {
-          setState(() {
-            docs = value;
-          })
-        });
-    db.readIDfinal().then((value) => {
-          setState(() {
-            docsid = value;
-          })
-        });
-    // db.readTitle().then((valuet) => {
-    //       setState(() {
-    //         docst = valuet;
-    //       })
-    //     });
-  }
+  // List docs = [1, 2, 3, 4, 5, 6, 7, 8];
+  // List docst = [];
+  // initialise() {
+  //   // db = DataBase();
+  //   // db.initiliase();
+  //   // db.read().then((value) => {
+  //   //       setState(() {
+  //   //         docs = value;
+  //   //       })
+  //   //     });
+  //   // db.readTitle().then((valuet) => {
+  //   //       setState(() {
+  //   //         docst = valuet;
+  //   //       })
+  //   //     });
+  // }
 
   TextEditingController _inputFieldDateController = new TextEditingController();
   // static const int sortName = 0;
@@ -52,13 +47,13 @@ class _MyHomePageState extends State<TableTest> {
   String _fecha = "";
   int newvalued = 0;
   String productId;
-  @override
-  void initState() {
-    // user.initData(100);
-    super.initState();
-    initialise();
-    // _cargarReferencias();
-  }
+  // @override
+  // void initState() {
+  //   // user.initData(100);
+  //   super.initState();
+  //   initialise();
+  //   // _cargarReferencias();
+  // }
 
   String columna2 = "columna2";
   String columna3 = "columna3";
@@ -69,8 +64,8 @@ class _MyHomePageState extends State<TableTest> {
   String columna8 = "columna8";
   String columna9 = "columna9";
   String columna10 = "columna10";
-  String columna11 = "Total de gastos";
-  String columna12 = "Ingresos";
+  String columna11 = "Ingreso";
+  String columna12 = "Total de gastos";
   String columna13 = "Balance";
 
   @override
@@ -91,9 +86,9 @@ class _MyHomePageState extends State<TableTest> {
                   Navigator.push(context, route);
                 });
               },
-              icon: Icon(Icons.logout_outlined))
+              icon: Icon(Icons.add))
         ],
-        title: Text("PLAN B"),
+        title: Text("PLAN Z"),
       ),
       body: _getBodyWidget(db),
     );
@@ -123,27 +118,27 @@ class _MyHomePageState extends State<TableTest> {
         .collection(EcommerceApp.collectionUser)
         .doc(EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
         .collection("date")
-        .doc(dDay.toString())
+        .doc()
         .set({
       "columna1": dDay,
-      "columna2": int.parse(docs[0]["columna2"].toString()),
-      "columna3": int.parse(docs[0]["columna3"].toString()),
-      "columna4": int.parse(docs[0]["columna4"].toString()),
-      "columna5": int.parse(docs[0]["columna5"].toString()),
-      "columna6": int.parse(docs[0]["columna6"].toString()),
-      "columna7": int.parse(docs[0]["columna7"].toString()),
-      "columna8": int.parse(docs[0]["columna8"].toString()),
-      "columna9": int.parse(docs[0]["columna9"].toString()),
-      "columna10": int.parse(docs[0]["columna10"].toString()),
-      "columna11": int.parse(docs[0]["columna11"].toString()),
-      "columna12": int.parse(docs[0]["columna12"].toString()),
-      "columna13": int.parse(docs[0]["columna13"].toString()),
+      "columna2": 0.toInt(),
+      "columna3": 0.toInt(),
+      "columna4": 0.toInt(),
+      "columna5": 0.toInt(),
+      "columna6": 0.toInt(),
+      "columna7": 0.toInt(),
+      "columna8": 0.toInt(),
+      "columna9": 0.toInt(),
+      "columna10": 0.toInt(),
+      "columna11": 0.toInt(),
+      "columna12": 0.toInt(),
+      "columna13": 0.toInt(),
     });
-    db.read().then((value) => {
-          setState(() {
-            docs = value;
-          })
-        });
+    // db.read().then((value) => {
+    //       setState(() {
+    //         docs = value;
+    //       })
+    //     });
   }
 
   Widget _getBodyWidget(DataBase dataBase) {
@@ -153,9 +148,9 @@ class _MyHomePageState extends State<TableTest> {
         rightHandSideColumnWidth: 1200,
         isFixedHeader: true,
         headerWidgets: _getTitleWidget(context),
-        leftSideItemBuilder: _generateFirstColumnRow,
-        rightSideItemBuilder: _generateRightHandSideColumnRow,
-        itemCount: docs.length > 1 ? docs.length : 13,
+        leftSideItemBuilder: _streamDatatitle,
+        rightSideItemBuilder: _streamData,
+        itemCount: 13,
         rowSeparatorWidget: const Divider(
           color: Colors.black54,
           height: 1.0,
@@ -181,13 +176,13 @@ class _MyHomePageState extends State<TableTest> {
           await Future.delayed(const Duration(milliseconds: 500));
           _hdtRefreshController.refreshCompleted();
 
-          db = DataBase();
-          db.initiliase();
-          db.read().then((value) => {
-                setState(() {
-                  docs = value;
-                })
-              });
+          // db = DataBase();
+          // db.initiliase();
+          // db.read().then((value) => {
+          //       setState(() {
+          //         docs = value;
+          //       })
+          //     });
           // db.readTitle().then((valuet) => {
           //       setState(() {
           //         docst = valuet;
@@ -222,9 +217,9 @@ class _MyHomePageState extends State<TableTest> {
       _getTitleItemWidget2(context, "titulo8", 100),
       _getTitleItemWidget2(context, "titulo9", 100),
       _getTitleItemWidget2(context, "titulo10", 100),
-      _getTitleItemWidget(columna11, 100),
-      _getTitleItemWidget(columna12, 100),
-      _getTitleItemWidget(columna13, 100),
+      _getTitleItemWidget2(context, "titulo11", 100),
+      _getTitleItemWidget2(context, "titulo12", 100),
+      _getTitleItemWidget2(context, "titulo13", 100),
 
       // _getTitleItemWidget(columna4, 100),
       // _getTitleItemWidget(columna5, 100),
@@ -281,7 +276,7 @@ class _MyHomePageState extends State<TableTest> {
       child: Container(
         child: Text(label, style: TextStyle(fontWeight: FontWeight.bold)),
         width: width,
-        height: 56,
+        height: 55,
         padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
         alignment: Alignment.centerLeft,
       ),
@@ -302,7 +297,7 @@ class _MyHomePageState extends State<TableTest> {
           return Text("Error");
         }
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return SizedBox(width: 100,);
+          return circularProgress();
         }
         // final datat = snapshot.requireData;
 
@@ -312,14 +307,22 @@ class _MyHomePageState extends State<TableTest> {
           },
           child: Container(
             width: 100,
-            height: 15,
+            height: 55,
             child: ListView.builder(
               itemBuilder: (context, index) {
                 print(index);
                 return snapshot.connectionState == ConnectionState.waiting
                     ? circularProgress()
-                    : Text(snapshot.data.docs[index][label].toString(),
-                        style: TextStyle(fontWeight: FontWeight.bold));
+                    : Container(
+                      height: 55,
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        
+                          child: Text(snapshot.data.docs[index][label].toString(),
+                              style: TextStyle(fontWeight: FontWeight.bold)),
+                        
+                      ),
+                    );
               },
             ),
           ),
@@ -339,17 +342,46 @@ class _MyHomePageState extends State<TableTest> {
     });
   }
 
-  Widget _generateFirstColumnRow(BuildContext context, index) {
-    DateTime myDateTime = (docs[index]["columna1"].toDate());
+    Widget _streamDatatitle(BuildContext context, model1) {
+    return StreamBuilder<QuerySnapshot>(
+        stream: FirebaseFirestore.instance
+            .collection("users")
+            .doc(EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
+            .collection("date")
+            .snapshots(),
+        builder: (context, AsyncSnapshot<QuerySnapshot> dataSnapshot) {
+          return !dataSnapshot.hasData
+              ? Container(
+                  child: Center(
+                    child: circularProgress(),
+                  ),
+                )
+              : Container(
+                width: 100,
+                  height: 56,
+                child: ListView.builder(
+                    itemBuilder: (context, index) {
+                      
+                      ValueModel model1 = ValueModel.fromJson(
+                          dataSnapshot.data.docs[index].data());
+                      return _generateFirstColumnRow(context, model1);
+                    },
+                    
+                  ),
+              );
+        });
+  }
+
+  Widget _generateFirstColumnRow(BuildContext context,ValueModel model1) {
+    DateTime myDateTime = (model1.columna1.toDate());
     return InkWell(
       onTap: () {
         print(DateFormat.yMMMd().format(myDateTime));
         print(myDateTime);
-        print(docsid[index].id);
       },
       child: Container(
         child: Text(
-          DateFormat.yMMMd().format(myDateTime),
+          DateFormat.yMMMd().format(model1.columna1.toDate()),
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         width: 100,
@@ -360,28 +392,51 @@ class _MyHomePageState extends State<TableTest> {
     );
   }
 
-  Widget _generateRightHandSideColumnRow(BuildContext context, index) {
-    int gastos = docs[index]["columna2"].toInt() +
-        docs[index]["columna3"].toInt() +
-        docs[index]["columna4"].toInt() +
-        docs[index]["columna5"].toInt() +
-        docs[index]["columna6"].toInt() +
-        docs[index]["columna7"].toInt() +
-        docs[index]["columna8"].toInt() +
-        docs[index]["columna9"].toInt() +
-        docs[index]["columna10"].toInt();
+  Widget _streamData(BuildContext context, model1) {
+    return StreamBuilder<QuerySnapshot>(
+        stream: FirebaseFirestore.instance
+            .collection("users")
+            .doc(EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
+            .collection("date")
+            .snapshots(),
+        builder: (context, AsyncSnapshot<QuerySnapshot> dataSnapshot) {
+          return !dataSnapshot.hasData
+              ? Container(
+                  child: Center(
+                    child: circularProgress(),
+                  ),
+                )
+              :  Container(
+                width: 100,
+                  height: 56,
+                child: ListView.builder(
+                          
+                          itemBuilder: (context, index) {
+                            ValueModel model1 = ValueModel.fromJson(
+                                dataSnapshot.data.docs[index].data());
+                            return _generateRightHandSideColumnRow(context, model1);
+                          },
+                          itemCount: dataSnapshot.data.docs.length,
+                        ),
+              );
+        });
+  }
 
-     int balance =  docs[index]["columna12"].toInt() - gastos  ;   
+
+
+  Widget _generateRightHandSideColumnRow(BuildContext context, ValueModel model1) {
     return Row(
       children: <Widget>[
         InkWell(
           onTap: () {
-            _mostrarAlertaValuedata(
-                context, docsid[index].id, "columna2", "New");
+            // print(docs[index]["columna2"]);
+            // print(index);
+            // _mostrarAlertaUpdateData(context, index);
+            changeData(context);
           },
           child: Container(
             child: Row(
-              children: <Widget>[Text(docs[index]["columna2"].toString())],
+              children: <Widget>[Text(model1.columna2.toString())],
             ),
             width: 100,
             height: 52,
@@ -391,11 +446,12 @@ class _MyHomePageState extends State<TableTest> {
         ),
         InkWell(
           onTap: () {
-            _mostrarAlertaValuedata(
-                context, docsid[index].id, "columna3", "New");
+            // print(docs[index]["columna3"]);
+            // print(index);
+            changeDatabyWeek(context);
           },
           child: Container(
-            child: Text(docs[index]["columna3"].toString()),
+            child: Text(model1.columna3.toString()),
             width: 100,
             height: 52,
             padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
@@ -404,11 +460,11 @@ class _MyHomePageState extends State<TableTest> {
         ),
         InkWell(
           onTap: () {
-            _mostrarAlertaValuedata(
-                context, docsid[index].id, "columna4", "New");
+            // print(docs[index]["columna4"]);
+            changeDatabyWeek(context);
           },
           child: Container(
-            child: Text(docs[index]["columna4"].toString()),
+            child: Text(model1.columna4.toString()),
             width: 100,
             height: 52,
             padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
@@ -417,11 +473,10 @@ class _MyHomePageState extends State<TableTest> {
         ),
         InkWell(
           onTap: () {
-            _mostrarAlertaValuedata(
-                context, docsid[index].id, "columna5", "New");
+            print(model1.columna4);
           },
           child: Container(
-            child: Text(docs[index]["columna5"].toString()),
+            child: Text(model1.columna5.toString()),
             width: 100,
             height: 52,
             padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
@@ -430,11 +485,10 @@ class _MyHomePageState extends State<TableTest> {
         ),
         InkWell(
           onTap: () {
-            _mostrarAlertaValuedata(
-                context, docsid[index].id, "columna6", "New");
+            print(model1.columna6);
           },
           child: Container(
-            child: Text(docs[index]["columna6"].toString()),
+            child: Text(model1.columna6.toString()),
             width: 100,
             height: 52,
             padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
@@ -443,11 +497,10 @@ class _MyHomePageState extends State<TableTest> {
         ),
         InkWell(
           onTap: () {
-            _mostrarAlertaValuedata(
-                context, docsid[index].id, "columna7", "New");
+            print(model1.columna7);
           },
           child: Container(
-            child: Text(docs[index]["columna7"].toString()),
+            child: Text(model1.columna7.toString()),
             width: 100,
             height: 52,
             padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
@@ -456,11 +509,10 @@ class _MyHomePageState extends State<TableTest> {
         ),
         InkWell(
           onTap: () {
-            _mostrarAlertaValuedata(
-                context, docsid[index].id, "columna8", "New");
+            print(model1.columna8);
           },
           child: Container(
-            child: Text(docs[index]["columna8"].toString()),
+            child: Text(model1.columna8.toString()),
             width: 100,
             height: 52,
             padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
@@ -469,11 +521,10 @@ class _MyHomePageState extends State<TableTest> {
         ),
         InkWell(
           onTap: () {
-            _mostrarAlertaValuedata(
-                context, docsid[index].id, "columna9", "New");
+            print(model1.columna9);
           },
           child: Container(
-            child: Text(docs[index]["columna9"].toString()),
+            child: Text(model1.columna7.toString()),
             width: 100,
             height: 52,
             padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
@@ -482,21 +533,10 @@ class _MyHomePageState extends State<TableTest> {
         ),
         InkWell(
           onTap: () {
-            _mostrarAlertaValuedata(
-                context, docsid[index].id, "columna10", "New");
+            print(model1.columna10);
           },
           child: Container(
-            child: Text(docs[index]["columna10"].toString()),
-            width: 100,
-            height: 52,
-            padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
-            alignment: Alignment.centerLeft,
-          ),
-        ),
-        InkWell(
-          onTap: () {},
-          child: Container(
-            child: Text("$gastos"),
+            child: Text(model1.columna10.toString()),
             width: 100,
             height: 52,
             padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
@@ -505,11 +545,10 @@ class _MyHomePageState extends State<TableTest> {
         ),
         InkWell(
           onTap: () {
-            _mostrarAlertaValuedata(
-                context, docsid[index].id, "columna12", "New");
+            print(model1.columna11);
           },
           child: Container(
-            child: Text(docs[index]["columna12"].toString()),
+            child: Text(model1.columna11.toString()),
             width: 100,
             height: 52,
             padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
@@ -517,9 +556,23 @@ class _MyHomePageState extends State<TableTest> {
           ),
         ),
         InkWell(
-          onTap: () {},
+          onTap: () {
+            print(model1.columna12);
+          },
           child: Container(
-            child: Text("$balance"),
+            child: Text(model1.columna12.toString()),
+            width: 100,
+            height: 52,
+            padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
+            alignment: Alignment.centerLeft,
+          ),
+        ),
+        InkWell(
+          onTap: () {
+            print(model1.columna13);
+          },
+          child: Container(
+            child: Text(model1.columna13.toString()),
             width: 100,
             height: 52,
             padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
@@ -579,8 +632,10 @@ class _MyHomePageState extends State<TableTest> {
     );
   }
 
-  _mostrarAlertaValuedata(
-      BuildContext context, valueID, String label, String newqty) {
+  _mostrarAlertaUpdateData(
+    BuildContext context,
+    index,
+  ) {
     showDialog(
       context: context,
       barrierDismissible: true,
@@ -588,29 +643,25 @@ class _MyHomePageState extends State<TableTest> {
         return AlertDialog(
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20.0)),
-            title: Text("Cantidad"),
+            title: Text("Nueva Fecha"),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 TextField(
-                  style: TextStyle(color: Colors.black),
-                  onChanged: (value) {
-                    newqty = value;
-                    if (newqty.isNotEmpty) {
-                      return changeDatabyWeek(context, valueID, label, newqty);
-                    }
-
-                    // _changeValue();
-                    setState(() {});
-                  },
+                  enableInteractiveSelection: false,
+                  controller: _inputFieldDateController,
                   decoration: InputDecoration(
-                    hintText: "Cantidad",
-                    hintStyle: TextStyle(color: Colors.grey),
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20.0)),
+                    hintText: "2021-08-12",
+                    labelText: "Fecha de naciemiento",
+                    suffixIcon: Icon(Icons.perm_contact_calendar),
+                    icon: Icon(Icons.calendar_today),
                   ),
+                  onSubmitted: (valued) {
+                    _updateData(context, index);
+                  },
                 ),
-                FlutterLogo(
-                  size: 100.0,
-                )
               ],
             ),
             actions: <Widget>[
@@ -622,22 +673,32 @@ class _MyHomePageState extends State<TableTest> {
                 child: Text("OK"),
                 onPressed: () {
                   Navigator.of(context).pop();
-                  db.read().then((value) => {
-                        setState(() {
-                          docs = value;
-                        })
-                      });
-                  db.readIDfinal().then((value) => {
-                        setState(() {
-                          docsid = value;
-                        })
-                      });
+                  saveUserInfoToFireStore(context);
                 },
               ),
             ]);
       },
     );
   }
+
+  //  Widget _crearFecha(contex) {
+  //   return TextField(
+  //     enableInteractiveSelection: false,
+  //     controller: _inputFieldDateController,
+  //     decoration: InputDecoration(
+  //       border: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0)),
+  //       hintText: "Fecha de naciemiento",
+  //       labelText: "Fecha de naciemiento",
+  //       suffixIcon: Icon(Icons.perm_contact_calendar),
+  //       icon: Icon(Icons.calendar_today),
+  //     ),
+  //     onTap: () {
+  //       FocusScope.of(context).requestFocus(new FocusNode());
+
+  //       _selectDate(context);
+  //     },
+  //   );
+  // }
 
   //Valor para todas las semanas
   Future changeData(BuildContext context) async {
@@ -660,11 +721,7 @@ class _MyHomePageState extends State<TableTest> {
         }
       });
       return batch.commit().then((value) {
-        db.read().then((value) => {
-              setState(() {
-                docs = value;
-              })
-            });
+        
       });
     });
   }
@@ -727,54 +784,41 @@ class DataBase {
     firestore = FirebaseFirestore.instance;
   }
 
-  Future<List> read() async {
-    QuerySnapshot querySnapshot;
-    List docs = [];
-    try {
-      querySnapshot = await firestore
-          .collection("users")
-          .doc(EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
-          .collection("date")
-          .orderBy("columna1", descending: false)
-          .get();
-      if (querySnapshot.docs.isNotEmpty) {
-        final docs = querySnapshot.docs;
-
-        return docs;
-      }
-    } catch (e) {
-      print(e);
-    }
-  }
-
-  // Future readID(context) async {
-  //   DocumentReference doc_ref = EcommerceApp.firestore
-  //       .collection(EcommerceApp.collectionUser)
-  //       .doc(EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
-  //       .collection("date")
-  //       .doc();
-
-  //   DocumentSnapshot docSnap = await doc_ref.get();
-  //   // var doc_id2 = docSnap.reference.id;
+  // Future<List> read() async {
+  //   QuerySnapshot querySnapshot;
+  //   List docs = [];
+  //   try {
+  //     querySnapshot = await firestore
+  //         .collection("users")
+  //         .doc(EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
+  //         .collection("date")
+  //         .orderBy("columna1", descending: false)
+  //         .get();
+  //     if (querySnapshot.docs.isNotEmpty) {
+  //       for (var doc in querySnapshot.docs.toList()) {
+  //         Map a = {
+  //           "columna1": doc["columna1"],
+  //           "columna2": doc["columna2"],
+  //           "columna3": doc["columna3"],
+  //           "columna4": doc["columna4"],
+  //           "columna5": doc["columna5"],
+  //           "columna6": doc["columna6"],
+  //           "columna7": doc["columna7"],
+  //           "columna8": doc["columna8"],
+  //           "columna9": doc["columna9"],
+  //           "columna10": doc["columna10"],
+  //           "columna11": doc["columna11"],
+  //           "columna12": doc["columna12"],
+  //           "columna13": doc["columna13"],
+  //         };
+  //         docs.add(a);
+  //       }
+  //       return docs;
+  //     }
+  //   } catch (e) {
+  //     print(e);
+  //   }
   // }
-
-  Future<List> readIDfinal() async {
-    QuerySnapshot querySnapshot;
-    List docsid = [];
-    try {
-      querySnapshot = await firestore
-          .collection("users")
-          .doc(EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
-          .collection("date")
-          .get();
-      if (querySnapshot.docs.isNotEmpty) {
-        final docsid = querySnapshot.docs;
-        return docsid;
-      }
-    } catch (e) {
-      print(e);
-    }
-  }
 
   // Future<List> readTitle() async {
   //   QuerySnapshot querySnapshot;
@@ -893,8 +937,7 @@ Future changeTitlte(String label, String newtitulo) async {
 //   });
 // }
 
-Future changeDatabyWeek(
-    BuildContext context, valueID, String label, String newqty) async {
+Future changeDatabyWeek(BuildContext context) async {
   WriteBatch batch = EcommerceApp.firestore.batch();
 
   EcommerceApp.firestore
@@ -905,8 +948,8 @@ Future changeDatabyWeek(
       .then((querySnapshot) {
     querySnapshot.docs.forEach((productId) {
       try {
-        if (valueID == productId.id) {
-          batch.update(productId.reference, {label:int.parse(newqty)});
+        if (productId == productId) {
+          batch.update(productId.reference, {"columna4": 600});
           if (productId != null) {}
         }
       } on FormatException catch (error) {

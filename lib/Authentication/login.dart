@@ -71,7 +71,7 @@ class _LoginState extends State<Login> {
               onPressed: () {
                 _emailTextEditingController.text.isNotEmpty &&
                         _passwordTextEditingController.text.isNotEmpty
-                    ? loginUser()
+                    ? loginUser(context)
                     : showDialog(
                         context: context,
                         builder: (c) {
@@ -118,7 +118,7 @@ class _LoginState extends State<Login> {
 
   FirebaseAuth _auth = FirebaseAuth.instance;
 
-  void loginUser() async {
+  void loginUser(context) async {
     showDialog(
         context: context,
         builder: (c) {
