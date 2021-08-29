@@ -32,7 +32,7 @@ class _AuthenticScreenState extends State<AuthenticScreen> {
           ),
 
           title: Text(
-            "Chiken-Mac",
+            "Plan B",
             style: TextStyle(fontSize: 65.0,color: Colors.white,fontFamily: "Signatra"),
           ),
 

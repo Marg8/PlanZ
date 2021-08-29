@@ -70,6 +70,7 @@ flutter:
     - images/
     # - json/
     - images/icon/icon.png
+    - images/icon/bank.png
 
   fonts:
     - family: Signatra
