@@ -10,22 +10,25 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:planz/pages/page1.dart';
 
-
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   EcommerceApp.auth = FirebaseAuth.instance;
   EcommerceApp.sharedPreferences = await SharedPreferences.getInstance();
   EcommerceApp.firestore = FirebaseFirestore.instance;
-
-  return  runApp(MyApp());
+  ErrorWidget.builder = (FlutterErrorDetails details) => Scaffold(
+        body: Center(
+          child: Text("Cargando...."),
+        ),
+      );
+  return runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return  MaterialApp(
+    return MaterialApp(
       //   localizationsDelegates: [
       //   GlobalMaterialLocalizations.delegate,
       //   GlobalWidgetsLocalizations.delegate,
@@ -34,16 +37,15 @@ class MyApp extends StatelessWidget {
       //   const Locale("en", "US"),
       //   const Locale("es", "ES"),
       // ],
-        theme: ThemeData(
-            cardColor: Colors.teal,
-            appBarTheme: AppBarTheme(color: Colors.teal, centerTitle: true),
-            bottomAppBarColor: Colors.teal,
-            floatingActionButtonTheme:
-                FloatingActionButtonThemeData(backgroundColor: Colors.orange)),
-        home: SplashScreen(),
-        // routes: {BurgerPage.tag: (_)=>BurgerPage()},
-        debugShowCheckedModeBanner: false,
-      
+      theme: ThemeData(
+          cardColor: Colors.teal,
+          appBarTheme: AppBarTheme(color: Colors.teal, centerTitle: true),
+          bottomAppBarColor: Colors.teal,
+          floatingActionButtonTheme:
+              FloatingActionButtonThemeData(backgroundColor: Colors.orange)),
+      home: SplashScreen(),
+      // routes: {BurgerPage.tag: (_)=>BurgerPage()},
+      debugShowCheckedModeBanner: false,
     );
   }
 }
@@ -72,8 +74,6 @@ class _SplashScreenState extends State<SplashScreen> {
       }
     });
   }
-
-
 
   @override
   Widget build(BuildContext context) {

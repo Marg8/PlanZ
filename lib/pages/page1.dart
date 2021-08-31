@@ -1,15 +1,12 @@
-
 import 'package:flutter/material.dart';
 import 'package:horizontal_data_table/horizontal_data_table.dart';
 import 'package:intl/intl.dart';
 import 'package:planz/Authentication/authenication.dart';
 import 'package:planz/Config/config.dart';
 
-
 import 'package:planz/Widgets/loadingWidget.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-
 
 class TableTest extends StatefulWidget {
   @override
@@ -52,6 +49,8 @@ class _MyHomePageState extends State<TableTest> {
   String _fecha = "";
   int newvalued = 0;
   String productId;
+  final oCcy = new NumberFormat("#,##0", "en_US");
+
   @override
   void initState() {
     // user.initData(100);
@@ -302,7 +301,9 @@ class _MyHomePageState extends State<TableTest> {
           return Text("Error");
         }
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return SizedBox(width: 100,);
+          return SizedBox(
+            width: 100,
+          );
         }
         // final datat = snapshot.requireData;
 
@@ -371,7 +372,7 @@ class _MyHomePageState extends State<TableTest> {
         docs[index]["columna9"].toInt() +
         docs[index]["columna10"].toInt();
 
-     int balance =  docs[index]["columna12"].toInt() - gastos  ;   
+    int balance = docs[index]["columna12"].toInt() - gastos;
     return Row(
       children: <Widget>[
         InkWell(
@@ -381,7 +382,10 @@ class _MyHomePageState extends State<TableTest> {
           },
           child: Container(
             child: Row(
-              children: <Widget>[Text(docs[index]["columna2"].toString())],
+              children: <Widget>[
+                Text(r"$" + oCcy.format(docs[index]["columna2"]),
+                    style: TextStyle(fontWeight: FontWeight.bold))
+              ],
             ),
             width: 100,
             height: 52,
@@ -395,7 +399,8 @@ class _MyHomePageState extends State<TableTest> {
                 context, docsid[index].id, "columna3", "New");
           },
           child: Container(
-            child: Text(docs[index]["columna3"].toString()),
+            child: Text(r"$" + oCcy.format(docs[index]["columna3"]),
+                style: TextStyle(fontWeight: FontWeight.bold)),
             width: 100,
             height: 52,
             padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
@@ -408,7 +413,8 @@ class _MyHomePageState extends State<TableTest> {
                 context, docsid[index].id, "columna4", "New");
           },
           child: Container(
-            child: Text(docs[index]["columna4"].toString()),
+            child: Text(r"$" + oCcy.format(docs[index]["columna4"]),
+                style: TextStyle(fontWeight: FontWeight.bold)),
             width: 100,
             height: 52,
             padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
@@ -421,7 +427,8 @@ class _MyHomePageState extends State<TableTest> {
                 context, docsid[index].id, "columna5", "New");
           },
           child: Container(
-            child: Text(docs[index]["columna5"].toString()),
+            child: Text(r"$" + oCcy.format(docs[index]["columna5"]),
+                style: TextStyle(fontWeight: FontWeight.bold)),
             width: 100,
             height: 52,
             padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
@@ -434,7 +441,8 @@ class _MyHomePageState extends State<TableTest> {
                 context, docsid[index].id, "columna6", "New");
           },
           child: Container(
-            child: Text(docs[index]["columna6"].toString()),
+            child: Text(r"$" + oCcy.format(docs[index]["columna6"]),
+                style: TextStyle(fontWeight: FontWeight.bold)),
             width: 100,
             height: 52,
             padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
@@ -447,7 +455,8 @@ class _MyHomePageState extends State<TableTest> {
                 context, docsid[index].id, "columna7", "New");
           },
           child: Container(
-            child: Text(docs[index]["columna7"].toString()),
+            child: Text(r"$" + oCcy.format(docs[index]["columna7"]),
+                style: TextStyle(fontWeight: FontWeight.bold)),
             width: 100,
             height: 52,
             padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
@@ -460,7 +469,8 @@ class _MyHomePageState extends State<TableTest> {
                 context, docsid[index].id, "columna8", "New");
           },
           child: Container(
-            child: Text(docs[index]["columna8"].toString()),
+            child: Text(r"$" + oCcy.format(docs[index]["columna8"]),
+                style: TextStyle(fontWeight: FontWeight.bold)),
             width: 100,
             height: 52,
             padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
@@ -473,7 +483,8 @@ class _MyHomePageState extends State<TableTest> {
                 context, docsid[index].id, "columna9", "New");
           },
           child: Container(
-            child: Text(docs[index]["columna9"].toString()),
+            child: Text(r"$" + oCcy.format(docs[index]["columna9"]),
+                style: TextStyle(fontWeight: FontWeight.bold)),
             width: 100,
             height: 52,
             padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
@@ -486,7 +497,8 @@ class _MyHomePageState extends State<TableTest> {
                 context, docsid[index].id, "columna10", "New");
           },
           child: Container(
-            child: Text(docs[index]["columna10"].toString()),
+            child: Text(r"$" + oCcy.format(docs[index]["columna10"]),
+                style: TextStyle(fontWeight: FontWeight.bold)),
             width: 100,
             height: 52,
             padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
@@ -496,7 +508,10 @@ class _MyHomePageState extends State<TableTest> {
         InkWell(
           onTap: () {},
           child: Container(
-            child: Text("$gastos"),
+            child: Text(
+              r"$" + oCcy.format(gastos),
+              style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+            ),
             width: 100,
             height: 52,
             padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
@@ -509,7 +524,9 @@ class _MyHomePageState extends State<TableTest> {
                 context, docsid[index].id, "columna12", "New");
           },
           child: Container(
-            child: Text(docs[index]["columna12"].toString()),
+            child: Text(r"$" + oCcy.format(docs[index]["columna12"]),
+                style: TextStyle(
+                    color: Colors.green, fontWeight: FontWeight.bold)),
             width: 100,
             height: 52,
             padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
@@ -519,7 +536,13 @@ class _MyHomePageState extends State<TableTest> {
         InkWell(
           onTap: () {},
           child: Container(
-            child: Text("$balance"),
+            child: balance > 0
+                ? Text(r"$" + oCcy.format(balance),
+                    style: TextStyle(
+                        color: Colors.green, fontWeight: FontWeight.bold))
+                : Text(r"$" + oCcy.format(balance),
+                    style: TextStyle(
+                        color: Colors.red, fontWeight: FontWeight.bold)),
             width: 100,
             height: 52,
             padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
@@ -906,7 +929,7 @@ Future changeDatabyWeek(
     querySnapshot.docs.forEach((productId) {
       try {
         if (valueID == productId.id) {
-          batch.update(productId.reference, {label:int.parse(newqty)});
+          batch.update(productId.reference, {label: int.parse(newqty)});
           if (productId != null) {}
         }
       } on FormatException catch (error) {
