@@ -43,22 +43,22 @@ class _RegisterState extends State<Register> {
             SizedBox(
               height: 10.0,
             ),
-            InkWell(
-              onTap: _selectAndPickImage,
-              child: CircleAvatar(
-                radius: _screenWidth * 0.15,
-                backgroundColor: Colors.white,
-                backgroundImage:
-                    _imageFile == null ? null : FileImage(_imageFile),
-                child: _imageFile == null
-                    ? Icon(
-                        Icons.add_photo_alternate,
-                        size: _screenWidth * 0.15,
-                        color: Colors.grey,
-                      )
-                    : null,
-              ),
-            ),
+            // InkWell(
+            //   onTap: _selectAndPickImage,
+            //   child: CircleAvatar(
+            //     radius: _screenWidth * 0.15,
+            //     backgroundColor: Colors.white,
+            //     backgroundImage:
+            //         _imageFile == null ? null : FileImage(_imageFile),
+            //     child: _imageFile == null
+            //         ? Icon(
+            //             Icons.add_photo_alternate,
+            //             size: _screenWidth * 0.15,
+            //             color: Colors.grey,
+            //           )
+            //         : null,
+            //   ),
+            // ),
             SizedBox(
               height: 8.0,
             ),

@@ -49,6 +49,7 @@ class _MyHomePageState extends State<TableTest> {
   String _fecha = "";
   int newvalued = 0;
   String productId;
+  
   final oCcy = new NumberFormat("#,##0", "en_US");
 
   @override
@@ -94,7 +95,7 @@ class _MyHomePageState extends State<TableTest> {
         ],
         title: Text("PLAN B"),
       ),
-      body: _getBodyWidget(db),
+      body: docs.length < 1 ? _nullmenssage() : _getBodyWidget(db),
     );
   }
 
@@ -151,9 +152,12 @@ class _MyHomePageState extends State<TableTest> {
         leftHandSideColumnWidth: 110,
         rightHandSideColumnWidth: 1200,
         isFixedHeader: true,
-        headerWidgets: _getTitleWidget(context),
-        leftSideItemBuilder: _generateFirstColumnRow,
-        rightSideItemBuilder: _generateRightHandSideColumnRow,
+        headerWidgets:
+            docs.length < 1 ? _nullmenssage : _getTitleWidget(context),
+        leftSideItemBuilder:
+            docs.length < 1 ? _nullmenssage : _generateFirstColumnRow,
+        rightSideItemBuilder:
+            docs.length < 1 ? _nullmenssage : _generateRightHandSideColumnRow,
         itemCount: docs.length > 1 ? docs.length : 13,
         rowSeparatorWidget: const Divider(
           color: Colors.black54,
@@ -225,49 +229,8 @@ class _MyHomePageState extends State<TableTest> {
       _getTitleItemWidget(columna12, 100),
       _getTitleItemWidget(columna13, 100),
 
-      // _getTitleItemWidget(columna4, 100),
-      // _getTitleItemWidget(columna5, 100),
-      // _getTitleItemWidget(columna6, 100),
-      // _getTitleItemWidget(columna7, 100),
-      // _getTitleItemWidget(columna8, 100),
-      // _getTitleItemWidget(columna9, 100),
-      // _getTitleItemWidget(columna10, 100),
-      // _getTitleItemWidget(columna11, 100),
-      // _getTitleItemWidget(columna12, 100),
-      // _getTitleItemWidget(columna13, 100),
-      // StreamBuilder(
-      //   stream: course,
-      //   builder: (context, snapshop) {
 
-      //   },
-      // )
     ];
-    // return [
-    //   TextButton(
-    //       style: TextButton.styleFrom(
-    //         padding: EdgeInsets.zero,
-    //       ),
-    //       child: _getTitleItemWidget('Fecha', 100),
-    //       onPressed: () {}),
-    //   TextButton(
-    //     style: TextButton.styleFrom(
-    //       padding: EdgeInsets.zero,
-    //     ),
-    //     child: _getTitleItemWidget2(context, "titulo2", 100),
-    //     onPressed: () {},
-    //   ),
-    //   _getTitleItemWidget(columna3, 100),
-    //   _getTitleItemWidget(columna4, 100),
-    //   _getTitleItemWidget(columna5, 100),
-    //   _getTitleItemWidget(columna6, 100),
-    //   _getTitleItemWidget(columna7, 100),
-    //   _getTitleItemWidget(columna8, 100),
-    //   _getTitleItemWidget(columna9, 100),
-    //   _getTitleItemWidget(columna10, 100),
-    //   _getTitleItemWidget(columna11, 100),
-    //   _getTitleItemWidget(columna12, 100),
-    //   _getTitleItemWidget(columna13, 100),
-    // ];
   }
 
   Widget _getTitleItemWidget(String label, double width) {
@@ -278,7 +241,7 @@ class _MyHomePageState extends State<TableTest> {
         // setState(() {});
       },
       child: Container(
-        child: Text(label, style: TextStyle(fontWeight: FontWeight.bold)),
+        child: Text(label, style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black)),
         width: width,
         height: 56,
         padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
@@ -312,15 +275,15 @@ class _MyHomePageState extends State<TableTest> {
             _mostrarAlerta(context, label, "A");
           },
           child: Container(
+            
             width: 100,
-            height: 15,
+            height: 16,
             child: ListView.builder(
+              itemCount: snapshot.data.docs.length ,
               itemBuilder: (context, index) {
-                print(index);
-                return snapshot.connectionState == ConnectionState.waiting
-                    ? circularProgress()
-                    : Text(snapshot.data.docs[index][label].toString(),
-                        style: TextStyle(fontWeight: FontWeight.bold));
+                
+                return Text(snapshot.data.docs[0][label].toString(),
+                    style: TextStyle(fontWeight: FontWeight.bold));
               },
             ),
           ),
@@ -329,28 +292,13 @@ class _MyHomePageState extends State<TableTest> {
     );
   }
 
-  _updateData(BuildContext context, index) {
-    FirebaseFirestore.instance
-        .collection("users")
-        .doc(EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
-        .collection("date")
-        .doc(productId)
-        .update({
-      "columna2": 100,
-    });
-  }
-
   Widget _generateFirstColumnRow(BuildContext context, index) {
-    DateTime myDateTime = (docs[index]["columna1"].toDate());
+    // DateTime myDateTime = (docs[index]["columna1"].toDate());
     return InkWell(
-      onTap: () {
-        print(DateFormat.yMMMd().format(myDateTime));
-        print(myDateTime);
-        print(docsid[index].id);
-      },
+      onTap: () {},
       child: Container(
         child: Text(
-          DateFormat.yMMMd().format(myDateTime),
+          DateFormat.yMMMd().format(docs[index]["columna1"].toDate()),
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         width: 100,
@@ -691,6 +639,23 @@ class _MyHomePageState extends State<TableTest> {
       });
     });
   }
+}
+
+Widget _nullmenssage() {
+  // DateTime myDateTime = (docs[index]["columna1"].toDate());
+  return InkWell(
+    onTap: () {},
+    child: Container(
+      child: Text(
+        "Cargando...",
+        style: TextStyle(fontWeight: FontWeight.bold),
+      ),
+      width: 100,
+      height: 52,
+      padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
+      alignment: Alignment.centerLeft,
+    ),
+  );
 }
 
 // User user = User();

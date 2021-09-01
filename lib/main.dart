@@ -11,6 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:planz/pages/page1.dart';
 
 Future<void> main() async {
+  
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   EcommerceApp.auth = FirebaseAuth.instance;
@@ -56,6 +57,8 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+
+   
   @override
   void initState() {
     super.initState();
