@@ -3,7 +3,7 @@ import 'package:planz/DialogBox/errorDialog.dart';
 import 'package:planz/Config/config.dart';
 import 'package:planz/DialogBox/loadingDialog.dart';
 import 'package:planz/Widgets/customTextField.dart';
-import 'package:planz/main.dart';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -146,10 +146,12 @@ class _LoginState extends State<Login> {
 
     if (firebaseUser != null) {
       readData(firebaseUser).then((s) {
+        
         Navigator.pop(context);
         Route route = MaterialPageRoute(builder: (c) => TableTest());
         Navigator.push(context, route);
       });
+      
     }
   }
 
@@ -165,13 +167,9 @@ class _LoginState extends State<Login> {
           EcommerceApp.userEmail, dataSnapshot.data()[EcommerceApp.userEmail]);
       await EcommerceApp.sharedPreferences.setString(
           EcommerceApp.userName, dataSnapshot.data()[EcommerceApp.userName]);
-      await EcommerceApp.sharedPreferences.setString(EcommerceApp.userAvatarUrl,
-          dataSnapshot.data()[EcommerceApp.userAvatarUrl]);
+ 
 
-      List<String> carList =
-          dataSnapshot.data()[EcommerceApp.userCartList].cast<String>();
-      await EcommerceApp.sharedPreferences
-          .setStringList(EcommerceApp.userCartList, carList);
+      
     });
   }
 }

@@ -11,7 +11,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:planz/pages/page1.dart';
 
 Future<void> main() async {
-  
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   EcommerceApp.auth = FirebaseAuth.instance;
@@ -19,7 +18,7 @@ Future<void> main() async {
   EcommerceApp.firestore = FirebaseFirestore.instance;
   ErrorWidget.builder = (FlutterErrorDetails details) => Scaffold(
         body: Center(
-          child: Text("Cargando...."),
+          child: Text("Cargando..."),
         ),
       );
   return runApp(MyApp());
@@ -57,8 +56,6 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-
-   
   @override
   void initState() {
     super.initState();
@@ -115,5 +112,33 @@ class _SplashScreenState extends State<SplashScreen> {
         ),
       ),
     );
+  }
+}
+
+class SplashScreen2 extends StatefulWidget {
+  @override
+  _SplashScreen2State createState() => _SplashScreen2State();
+}
+
+class _SplashScreen2State extends State<SplashScreen2> {
+  // @override
+  void initState() {
+    super.initState();
+
+    returnscreen();
+  }
+
+
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      child: returnscreen()
+    );
+  }
+
+  Widget returnscreen() {
+          Route route = MaterialPageRoute(builder: (_) => AuthenticScreen());
+      Navigator.pop(context, route);
   }
 }

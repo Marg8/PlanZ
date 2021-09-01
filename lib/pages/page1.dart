@@ -26,7 +26,10 @@ class _MyHomePageState extends State<TableTest> {
     db.read().then((value) => {
           setState(() {
             docs = value;
+            
           })
+          
+          
         });
     db.readIDfinal().then((value) => {
           setState(() {
@@ -58,6 +61,11 @@ class _MyHomePageState extends State<TableTest> {
     super.initState();
     initialise();
     // _cargarReferencias();
+    db.read().then((value) => {
+          setState(() {
+            docs = value;
+          })
+        });
   }
 
   String columna2 = "columna2";
@@ -153,11 +161,23 @@ class _MyHomePageState extends State<TableTest> {
         rightHandSideColumnWidth: 1200,
         isFixedHeader: true,
         headerWidgets:
-            docs.length < 1 ? _nullmenssage : _getTitleWidget(context),
+            docs.length < 1 ? db.read().then((value) => {
+          setState(() {
+            docs = value;
+          })
+        }) : _getTitleWidget(context),
         leftSideItemBuilder:
-            docs.length < 1 ? _nullmenssage : _generateFirstColumnRow,
+            docs.length < 1 ? db.read().then((value) => {
+          setState(() {
+            docs = value;
+          })
+        }) : _generateFirstColumnRow,
         rightSideItemBuilder:
-            docs.length < 1 ? _nullmenssage : _generateRightHandSideColumnRow,
+            docs.length < 1 ? db.read().then((value) => {
+          setState(() {
+            docs = value;
+          })
+        }) : _generateRightHandSideColumnRow,
         itemCount: docs.length > 1 ? docs.length : 13,
         rowSeparatorWidget: const Divider(
           color: Colors.black54,
@@ -529,9 +549,9 @@ class _MyHomePageState extends State<TableTest> {
                     hintStyle: TextStyle(color: Colors.grey),
                   ),
                 ),
-                FlutterLogo(
-                  size: 100.0,
-                )
+                // FlutterLogo(
+                //   size: 100.0,
+                // )
               ],
             ),
             actions: <Widget>[
@@ -579,9 +599,9 @@ class _MyHomePageState extends State<TableTest> {
                     hintStyle: TextStyle(color: Colors.grey),
                   ),
                 ),
-                FlutterLogo(
-                  size: 100.0,
-                )
+                // FlutterLogo(
+                //   size: 100.0,
+                // )
               ],
             ),
             actions: <Widget>[
@@ -905,3 +925,20 @@ Future changeDatabyWeek(
     return batch.commit();
   });
 }
+ Future readData() async {
+    FirebaseFirestore.instance
+        .collection("users")
+         .doc(EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
+        .get()
+        .then((dataSnapshot) async {
+      await EcommerceApp.sharedPreferences
+          .setString("uid", dataSnapshot.data()[EcommerceApp.userUID]);
+      await EcommerceApp.sharedPreferences.setString(
+          EcommerceApp.userEmail, dataSnapshot.data()[EcommerceApp.userEmail]);
+      await EcommerceApp.sharedPreferences.setString(
+          EcommerceApp.userName, dataSnapshot.data()[EcommerceApp.userName]);
+ 
+
+      
+    });
+  }

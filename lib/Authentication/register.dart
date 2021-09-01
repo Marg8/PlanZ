@@ -1,12 +1,12 @@
-import 'dart:io';
+
 import 'package:planz/Config/config.dart';
 import 'package:planz/DialogBox/errorDialog.dart';
-import 'package:planz/DialogBox/loadingDialog.dart';
+
 import 'package:planz/Widgets/customTextField.dart';
-import 'package:planz/main.dart';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
+
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:planz/pages/page1.dart';
@@ -27,7 +27,7 @@ class _RegisterState extends State<Register> {
       TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   String userImageUrl = "";
-  File _imageFile;
+  // File _imageFile;
   final ImagePicker pickerImg = ImagePicker();
 
   @override
@@ -118,35 +118,22 @@ class _RegisterState extends State<Register> {
         ),
       ),
     );
-  }
-
-  Future<void> _selectAndPickImage() async {
-    final _imageFileP = await pickerImg.getImage(source: ImageSource.gallery);
-    setState(() {
-      _imageFile = File(_imageFileP.path);
-    });
-  }
+  } // Future<void> _selectAndPickImage() async {
+  //   final _imageFileP = await pickerImg.getImage(source: ImageSource.gallery);
+  //   setState(() {
+  //     _imageFile = File(_imageFileP.path);
+  //   });
+  // }
 
   Future<void> uploadAndSaveImage() async {
-    if (_imageFile == null) {
-      showDialog(
-          context: context,
-          builder: (c) {
-            return ErrorAlertDialog(
-              message: "Please select an image file.",
-            );
-          });
-    } else {
-      _passwordTextEditingController.text ==
-              _cPasswordTextEditingController.text
-          ? _emailTextEditingController.text.isNotEmpty &&
-                  _passwordTextEditingController.text.isNotEmpty &&
-                  _cPasswordTextEditingController.text.isNotEmpty &&
-                  _nameTextEditingController.text.isNotEmpty
-              ? uploadToStorage()
-              : displayDilog("Please fill up the registration complete form..")
-          : displayDilog("Passsword do not macth.");
-    }
+    _passwordTextEditingController.text == _cPasswordTextEditingController.text
+        ? _emailTextEditingController.text.isNotEmpty &&
+                _passwordTextEditingController.text.isNotEmpty &&
+                _cPasswordTextEditingController.text.isNotEmpty &&
+                _nameTextEditingController.text.isNotEmpty
+            ? _registerUser()
+            : displayDilog("Please fill up the registration complete form..")
+        : displayDilog("Passsword do not macth.");
   }
 
   displayDilog(String msg) {
@@ -159,26 +146,26 @@ class _RegisterState extends State<Register> {
         });
   }
 
-  uploadToStorage() async {
-    showDialog(
-        context: context,
-        builder: (c) {
-          return LoadingAlertDialog();
-        });
-    String imageFileName = DateTime.now().millisecondsSinceEpoch.toString();
+  // uploadToStorage() async {
+  //   showDialog(
+  //       context: context,
+  //       builder: (c) {
+  //         return LoadingAlertDialog();
+  //       });
+  //   String imageFileName = DateTime.now().millisecondsSinceEpoch.toString();
 
-    Reference storageReference =
-        FirebaseStorage.instance.ref().child(imageFileName);
+  //   Reference storageReference =
+  //       FirebaseStorage.instance.ref().child(imageFileName);
 
-    UploadTask storageUploadTask = storageReference.putFile(_imageFile);
+  //   UploadTask storageUploadTask = storageReference.putFile(_imageFile);
 
-    TaskSnapshot taskSnapshot = await storageUploadTask;
-    await taskSnapshot.ref.getDownloadURL().then((urlImage) {
-      userImageUrl = urlImage;
+  //   TaskSnapshot taskSnapshot = await storageUploadTask;
+  //   await taskSnapshot.ref.getDownloadURL().then((urlImage) {
+  //     userImageUrl = urlImage;
 
-      _registerUser();
-    });
-  }
+  //     _registerUser();
+  //   });
+  // }
 
   FirebaseAuth _auth = FirebaseAuth.instance;
   void _registerUser() async {
@@ -203,9 +190,8 @@ class _RegisterState extends State<Register> {
     });
     if (firebaseUser != null) {
       saveUserInfoToFireStore(firebaseUser).then((value) {
-        Navigator.pop(context);
-        Route route = MaterialPageRoute(builder: (c) => TableTest());
-        Navigator.push(context, route);
+        saveUserInfoToFireStorer();
+        
       });
     }
   }
@@ -215,19 +201,94 @@ class _RegisterState extends State<Register> {
       "uid": fUser.uid,
       "email": fUser.email,
       "name": _nameTextEditingController.text.trim(),
-      "url": userImageUrl,
-      EcommerceApp.userCartList: ["garbaValue"]
-      
-    });
+      // "url": userImageUrl,
+      // EcommerceApp.userCartList: ["garbaValue"]
+    }).then((value) {});
 
     await EcommerceApp.sharedPreferences.setString("uid", fUser.uid);
     await EcommerceApp.sharedPreferences
         .setString(EcommerceApp.userEmail, fUser.email);
     await EcommerceApp.sharedPreferences
         .setString(EcommerceApp.userName, _nameTextEditingController.text);
-    await EcommerceApp.sharedPreferences
-        .setString(EcommerceApp.userAvatarUrl, userImageUrl);
+    // await EcommerceApp.sharedPreferences
+    //     .setString(EcommerceApp.userAvatarUrl, userImageUrl);
     await EcommerceApp.sharedPreferences
         .setStringList(EcommerceApp.userCartList, ["garbaValue"]);
+  }
+
+  Future saveUserInfoToFireStorer() async {
+    var dDay = DateTime.now();
+    EcommerceApp.firestore
+        .collection(EcommerceApp.collectionUser)
+        .doc(EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
+        .collection("date")
+        .doc(dDay.toString())
+        .set({
+      "columna1": dDay,
+      "columna2": int.parse(0.toString()),
+      "columna3": int.parse(0.toString()),
+      "columna4": int.parse(0.toString()),
+      "columna5": int.parse(0.toString()),
+      "columna6": int.parse(0.toString()),
+      "columna7": int.parse(0.toString()),
+      "columna8": int.parse(0.toString()),
+      "columna9": int.parse(0.toString()),
+      "columna10": int.parse(0.toString()),
+      "columna11": int.parse(0.toString()),
+      "columna12": int.parse(0.toString()),
+      "columna13": int.parse(0.toString()),
+    }).then((value) => saveUserInfoToFireStorer2());
+  }
+ var dDay = DateTime.now();
+  Future saveUserInfoToFireStorer2() async {
+    DateTime dDay2 = dDay.add(Duration(days: 7));
+    EcommerceApp.firestore
+        .collection(EcommerceApp.collectionUser)
+        .doc(EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
+        .collection("date")
+        .doc(dDay2.toString())
+        .set({
+      "columna1": dDay2,
+      "columna2": int.parse(0.toString()),
+      "columna3": int.parse(0.toString()),
+      "columna4": int.parse(0.toString()),
+      "columna5": int.parse(0.toString()),
+      "columna6": int.parse(0.toString()),
+      "columna7": int.parse(0.toString()),
+      "columna8": int.parse(0.toString()),
+      "columna9": int.parse(0.toString()),
+      "columna10": int.parse(0.toString()),
+      "columna11": int.parse(0.toString()),
+      "columna12": int.parse(0.toString()),
+      "columna13": int.parse(0.toString()),
+    }).then((value) => saveUserInfoToFireStoreTitles());
+  }
+
+  Future saveUserInfoToFireStoreTitles() async {
+    var dDay = DateTime.now();
+    EcommerceApp.firestore
+        .collection(EcommerceApp.collectionUser)
+        .doc(EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
+        .collection("categorias")
+        .doc(dDay.toString())
+        .set({
+      "titulo1": "Titulo1",
+      "titulo2": "Titulo2",
+      "titulo3": "Titulo3",
+      "titulo4": "Titulo4",
+      "titulo5": "Titulo5",
+      "titulo6": "Titulo6",
+      "titulo7": "Titulo7",
+      "titulo8": "Titulo8",
+      "titulo9": "Titulo9",
+      "titulo10": "Titulo10",
+      "titulo11": "Titulo11",
+      "titulo12": "Titulo12",
+      "titulo13": "Titulo13",
+    }).then((value) {
+      Navigator.pop(context);
+      Route route = MaterialPageRoute(builder: (c) => TableTest());
+      Navigator.push(context, route);
+    });
   }
 }
