@@ -18,7 +18,7 @@ Future<void> main() async {
   EcommerceApp.firestore = FirebaseFirestore.instance;
   ErrorWidget.builder = (FlutterErrorDetails details) => Scaffold(
         body: Center(
-          child: Text("Cargando..."),
+          child: SplashScreen2(),
         ),
       );
   return runApp(MyApp());
@@ -122,23 +122,26 @@ class SplashScreen2 extends StatefulWidget {
 
 class _SplashScreen2State extends State<SplashScreen2> {
   // @override
-  void initState() {
-    super.initState();
+  // void initState() {
+  //   super.initState();
 
-    returnscreen();
-  }
-
-
+  //   returnscreen();
+  // }
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      child: returnscreen()
-    );
+    return Material(child: TextButton(
+      child: Text("Reingresar"),
+      onPressed: () {
+        returnscreen();
+      },
+    ));
   }
 
-  Widget returnscreen() {
-          Route route = MaterialPageRoute(builder: (_) => AuthenticScreen());
-      Navigator.pop(context, route);
+  returnscreen() {
+    Route route = MaterialPageRoute(builder: (_) => AuthenticScreen());
+    Navigator.pushReplacement(context, route);
   }
 }
+
+

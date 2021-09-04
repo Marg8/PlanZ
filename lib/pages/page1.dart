@@ -122,6 +122,17 @@ class _MyHomePageState extends State<TableTest> {
       });
 
       saveUserInfoToFireStore(context);
+
+       db.read().then((value) => {
+            setState(() {
+              docs = value;
+            })
+          });
+      db.readIDfinal().then((value) => {
+            setState(() {
+              docsid = value;
+            })
+          });
     }
   }
 
