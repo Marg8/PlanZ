@@ -41,43 +41,6 @@
           ]
         }
       }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:650880014148:android:64110aa233a765a73f6911",
-        "android_client_info": {
-          "package_name": "com.marg.planz"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "650880014148-3jm81mc4cnn8k05qvpdb3bampodth6uh.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.marg.planz",
-            "certificate_hash": "c497cdeae74f2fc4502027297880c325f72b4beb"
-          }
-        },
-        {
-          "client_id": "650880014148-fvtcabkb3rggrsi5jp38gsfgn0qlq455.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyD73ORjygVB-Aq_PuxhnK7zqgj3apwkmMk"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "650880014148-fvtcabkb3rggrsi5jp38gsfgn0qlq455.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
-        }
-      }
     }
   ],
   "configuration_version": "1"

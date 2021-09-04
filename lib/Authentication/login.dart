@@ -149,7 +149,7 @@ class _LoginState extends State<Login> {
         
         Navigator.pop(context);
         Route route = MaterialPageRoute(builder: (c) => TableTest());
-        Navigator.push(context, route);
+        Navigator.pushReplacement(context, route);
       });
       
     }

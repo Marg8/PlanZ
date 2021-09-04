@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:horizontal_data_table/horizontal_data_table.dart';
 import 'package:intl/intl.dart';
 import 'package:planz/Authentication/authenication.dart';
@@ -26,10 +27,7 @@ class _MyHomePageState extends State<TableTest> {
     db.read().then((value) => {
           setState(() {
             docs = value;
-            
           })
-          
-          
         });
     db.readIDfinal().then((value) => {
           setState(() {
@@ -52,7 +50,7 @@ class _MyHomePageState extends State<TableTest> {
   String _fecha = "";
   int newvalued = 0;
   String productId;
-  
+
   final oCcy = new NumberFormat("#,##0", "en_US");
 
   @override
@@ -85,6 +83,7 @@ class _MyHomePageState extends State<TableTest> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         actions: [
           IconButton(
               onPressed: () {
@@ -94,9 +93,10 @@ class _MyHomePageState extends State<TableTest> {
           IconButton(
               onPressed: () {
                 EcommerceApp.auth.signOut().then((c) {
+                  EcommerceApp.sharedPreferences.clear();
                   Route route =
                       MaterialPageRoute(builder: (c) => AuthenticScreen());
-                  Navigator.push(context, route);
+                  Navigator.pushReplacement(context, route);
                 });
               },
               icon: Icon(Icons.logout_outlined))
@@ -123,7 +123,7 @@ class _MyHomePageState extends State<TableTest> {
 
       saveUserInfoToFireStore(context);
 
-       db.read().then((value) => {
+      db.read().then((value) => {
             setState(() {
               docs = value;
             })
@@ -165,30 +165,53 @@ class _MyHomePageState extends State<TableTest> {
         });
   }
 
+  Future deleteInfoToFireStore(context,String dateID) async {
+    
+    EcommerceApp.firestore
+        .collection(EcommerceApp.collectionUser)
+        .doc(EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
+        .collection("date")
+        .doc(dateID)
+        .delete()
+        .then((value) => {
+          db.read().then((value) => {
+          setState(() {
+            docs = value;
+          })
+        }),
+        Fluttertoast.showToast(msg: "Deleted")
+        });
+
+    
+  }
+
   Widget _getBodyWidget(DataBase dataBase) {
     return Container(
       child: HorizontalDataTable(
         leftHandSideColumnWidth: 110,
         rightHandSideColumnWidth: 1200,
         isFixedHeader: true,
-        headerWidgets:
-            docs.length < 1 ? db.read().then((value) => {
-          setState(() {
-            docs = value;
-          })
-        }) : _getTitleWidget(context),
-        leftSideItemBuilder:
-            docs.length < 1 ? db.read().then((value) => {
-          setState(() {
-            docs = value;
-          })
-        }) : _generateFirstColumnRow,
-        rightSideItemBuilder:
-            docs.length < 1 ? db.read().then((value) => {
-          setState(() {
-            docs = value;
-          })
-        }) : _generateRightHandSideColumnRow,
+        headerWidgets: docs.length < 1
+            ? db.read().then((value) => {
+                  setState(() {
+                    docs = value;
+                  })
+                })
+            : _getTitleWidget(context),
+        leftSideItemBuilder: docs.length < 1
+            ? db.read().then((value) => {
+                  setState(() {
+                    docs = value;
+                  })
+                })
+            : _generateFirstColumnRow,
+        rightSideItemBuilder: docs.length < 1
+            ? db.read().then((value) => {
+                  setState(() {
+                    docs = value;
+                  })
+                })
+            : _generateRightHandSideColumnRow,
         itemCount: docs.length > 1 ? docs.length : 13,
         rowSeparatorWidget: const Divider(
           color: Colors.black54,
@@ -259,8 +282,6 @@ class _MyHomePageState extends State<TableTest> {
       _getTitleItemWidget(columna11, 100),
       _getTitleItemWidget(columna12, 100),
       _getTitleItemWidget(columna13, 100),
-
-
     ];
   }
 
@@ -272,7 +293,8 @@ class _MyHomePageState extends State<TableTest> {
         // setState(() {});
       },
       child: Container(
-        child: Text(label, style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black)),
+        child: Text(label,
+            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black)),
         width: width,
         height: 56,
         padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
@@ -306,13 +328,11 @@ class _MyHomePageState extends State<TableTest> {
             _mostrarAlerta(context, label, "A");
           },
           child: Container(
-            
             width: 100,
             height: 16,
             child: ListView.builder(
-              itemCount: snapshot.data.docs.length ,
+              itemCount: snapshot.data.docs.length,
               itemBuilder: (context, index) {
-                
                 return Text(snapshot.data.docs[0][label].toString(),
                     style: TextStyle(fontWeight: FontWeight.bold));
               },
@@ -936,20 +956,18 @@ Future changeDatabyWeek(
     return batch.commit();
   });
 }
- Future readData() async {
-    FirebaseFirestore.instance
-        .collection("users")
-         .doc(EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
-        .get()
-        .then((dataSnapshot) async {
-      await EcommerceApp.sharedPreferences
-          .setString("uid", dataSnapshot.data()[EcommerceApp.userUID]);
-      await EcommerceApp.sharedPreferences.setString(
-          EcommerceApp.userEmail, dataSnapshot.data()[EcommerceApp.userEmail]);
-      await EcommerceApp.sharedPreferences.setString(
-          EcommerceApp.userName, dataSnapshot.data()[EcommerceApp.userName]);
- 
 
-      
-    });
-  }
+Future readData() async {
+  FirebaseFirestore.instance
+      .collection("users")
+      .doc(EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
+      .get()
+      .then((dataSnapshot) async {
+    await EcommerceApp.sharedPreferences
+        .setString("uid", dataSnapshot.data()[EcommerceApp.userUID]);
+    await EcommerceApp.sharedPreferences.setString(
+        EcommerceApp.userEmail, dataSnapshot.data()[EcommerceApp.userEmail]);
+    await EcommerceApp.sharedPreferences.setString(
+        EcommerceApp.userName, dataSnapshot.data()[EcommerceApp.userName]);
+  });
+}

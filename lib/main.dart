@@ -131,7 +131,12 @@ class _SplashScreen2State extends State<SplashScreen2> {
   @override
   Widget build(BuildContext context) {
     return Material(child: TextButton(
-      child: Text("Reingresar"),
+      child: Container(
+        child: Center(child: Text("Star Plan",style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold),)),
+      height: 30,
+      width: 80,
+      color: Colors.black,
+      ),
       onPressed: () {
         returnscreen();
       },
@@ -139,7 +144,7 @@ class _SplashScreen2State extends State<SplashScreen2> {
   }
 
   returnscreen() {
-    Route route = MaterialPageRoute(builder: (_) => AuthenticScreen());
+    Route route = MaterialPageRoute(builder: (_) => TableTest());
     Navigator.pushReplacement(context, route);
   }
 }
