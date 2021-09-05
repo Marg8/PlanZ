@@ -101,7 +101,7 @@ class _SplashScreenState extends State<SplashScreen> {
                 height: 20.0,
               ),
               Text(
-                "Plan de Pagos",
+                "Payment plan",
                 style: TextStyle(
                     color: Colors.black,
                     fontSize: 20.0,
@@ -130,17 +130,21 @@ class _SplashScreen2State extends State<SplashScreen2> {
 
   @override
   Widget build(BuildContext context) {
-    return Material(child: TextButton(
-      child: Container(
-        child: Center(child: Text("Star Plan",style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold),)),
-      height: 30,
-      width: 80,
-      color: Colors.black,
-      ),
-      onPressed: () {
-        returnscreen();
-      },
-    ));
+    return Scaffold(
+      backgroundColor: Colors.greenAccent,
+       body: Material(
+        child: TextButton(
+        child: Container(
+          child: Center(child: Text("Star Plan",style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold),)),
+        height: 30,
+        width: 80,
+        color: Colors.black,
+        ),
+        onPressed: () {
+          returnscreen();
+        },
+      )),
+    );
   }
 
   returnscreen() {

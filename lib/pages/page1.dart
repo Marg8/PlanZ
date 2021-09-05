@@ -5,8 +5,6 @@ import 'package:intl/intl.dart';
 import 'package:planz/Authentication/authenication.dart';
 import 'package:planz/Config/config.dart';
 
-import 'package:planz/Widgets/loadingWidget.dart';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class TableTest extends StatefulWidget {
@@ -42,6 +40,7 @@ class _MyHomePageState extends State<TableTest> {
   }
 
   TextEditingController _inputFieldDateController = new TextEditingController();
+  dynamic newDateEdit;
   // static const int sortName = 0;
   // static const int sortStatus = 1;
   bool isAscending = true;
@@ -75,8 +74,8 @@ class _MyHomePageState extends State<TableTest> {
   String columna8 = "columna8";
   String columna9 = "columna9";
   String columna10 = "columna10";
-  String columna11 = "Total de gastos";
-  String columna12 = "Ingresos";
+  String columna11 = "Expenses/ Gastos";
+  String columna12 = "Income/ Ingresos";
   String columna13 = "Balance";
 
   @override
@@ -165,8 +164,7 @@ class _MyHomePageState extends State<TableTest> {
         });
   }
 
-  Future deleteInfoToFireStore(context,String dateID) async {
-    
+  Future deleteInfoToFireStore(context, String dateID) async {
     EcommerceApp.firestore
         .collection(EcommerceApp.collectionUser)
         .doc(EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
@@ -174,15 +172,13 @@ class _MyHomePageState extends State<TableTest> {
         .doc(dateID)
         .delete()
         .then((value) => {
-          db.read().then((value) => {
-          setState(() {
-            docs = value;
-          })
-        }),
-        Fluttertoast.showToast(msg: "Deleted")
-        });
-
-    
+              db.read().then((value) => {
+                    setState(() {
+                      docs = value;
+                    })
+                  }),
+              Fluttertoast.showToast(msg: "Date Was Deleted")
+            });
   }
 
   Widget _getBodyWidget(DataBase dataBase) {
@@ -268,7 +264,7 @@ class _MyHomePageState extends State<TableTest> {
           style: TextButton.styleFrom(
             padding: EdgeInsets.zero,
           ),
-          child: _getTitleItemWidget('Fecha', 100),
+          child: _getTitleItemWidget('Date', 100),
           onPressed: () {}),
       _getTitleItemWidget2(context, "titulo2", 100),
       _getTitleItemWidget2(context, "titulo3", 100),
@@ -346,7 +342,10 @@ class _MyHomePageState extends State<TableTest> {
   Widget _generateFirstColumnRow(BuildContext context, index) {
     // DateTime myDateTime = (docs[index]["columna1"].toDate());
     return InkWell(
-      onTap: () {},
+      onTap: () {
+        print(docsid[index].id);
+        _mostrarAlertaDatedata(context, docsid[index].id, "columna1", "New");
+      },
       child: Container(
         child: Text(
           DateFormat.yMMMd().format(docs[index]["columna1"].toDate()),
@@ -532,6 +531,7 @@ class _MyHomePageState extends State<TableTest> {
             alignment: Alignment.centerLeft,
           ),
         ),
+         
         InkWell(
           onTap: () {},
           child: Container(
@@ -560,7 +560,7 @@ class _MyHomePageState extends State<TableTest> {
         return AlertDialog(
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20.0)),
-            title: Text("Titulo"),
+            title: Text("Title"),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
@@ -568,15 +568,12 @@ class _MyHomePageState extends State<TableTest> {
                   style: TextStyle(color: Colors.black),
                   onChanged: (value) {
                     newtitulo = value;
-                    if (newtitulo.isNotEmpty) {
-                      return changeTitlte(label, newtitulo);
-                    }
 
                     // _changeValue();
                     setState(() {});
                   },
                   decoration: InputDecoration(
-                    hintText: "Nuevo titulo",
+                    hintText: "New title",
                     hintStyle: TextStyle(color: Colors.grey),
                   ),
                 ),
@@ -587,12 +584,15 @@ class _MyHomePageState extends State<TableTest> {
             ),
             actions: <Widget>[
               FlatButton(
-                child: Text("Cancelar"),
+                child: Text("Cancel"),
                 onPressed: () => Navigator.of(context).pop(),
               ),
               FlatButton(
-                child: Text("OK"),
+                child: Text("Done"),
                 onPressed: () {
+                  if (newtitulo.isNotEmpty) {
+                    changeTitlte(label, newtitulo);
+                  }
                   Navigator.of(context).pop();
                 },
               ),
@@ -610,7 +610,7 @@ class _MyHomePageState extends State<TableTest> {
         return AlertDialog(
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20.0)),
-            title: Text("Cantidad"),
+            title: Text("Quantity"),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
@@ -618,15 +618,12 @@ class _MyHomePageState extends State<TableTest> {
                   style: TextStyle(color: Colors.black),
                   onChanged: (value) {
                     newqty = value;
-                    if (newqty.isNotEmpty) {
-                      return changeDatabyWeek(context, valueID, label, newqty);
-                    }
 
                     // _changeValue();
                     setState(() {});
                   },
                   decoration: InputDecoration(
-                    hintText: "Cantidad",
+                    hintText: "Quantity",
                     hintStyle: TextStyle(color: Colors.grey),
                   ),
                 ),
@@ -637,18 +634,134 @@ class _MyHomePageState extends State<TableTest> {
             ),
             actions: <Widget>[
               FlatButton(
-                child: Text("Cancelar"),
+                child: Text("Cancel"),
                 onPressed: () => Navigator.of(context).pop(),
               ),
               FlatButton(
-                child: Text("OK"),
+                child: Text("Done"),
                 onPressed: () {
+                  if (newqty.isNotEmpty) {
+                    changeDatabyWeek(context, valueID, label, newqty);
+                  }
                   Navigator.of(context).pop();
-                  db.read().then((value) => {
-                        setState(() {
-                          docs = value;
-                        })
-                      });
+                },
+              ),
+            ]);
+      },
+    );
+  }
+
+  Future changeDatabyWeek(
+      BuildContext context, valueID, String label, String newqty) async {
+    WriteBatch batch = EcommerceApp.firestore.batch();
+
+    EcommerceApp.firestore
+        .collection(EcommerceApp.collectionUser)
+        .doc(EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
+        .collection("date")
+        .get()
+        .then((querySnapshot) {
+      querySnapshot.docs.forEach((productId) {
+        try {
+          if (valueID == productId.id) {
+            batch.update(productId.reference, {label: int.parse(newqty)});
+            if (productId != null) {}
+          }
+        } on FormatException catch (error) {
+          print("The document ${error.source} could not be parsed.");
+          return null;
+        }
+      });
+      return batch.commit().then((value) => {
+            db.read().then((value) => {
+                  setState(() {
+                    docs = value;
+                  })
+                }),
+            db.readIDfinal().then((value) => {
+                  setState(() {
+                    docsid = value;
+                  })
+                })
+          });
+    });
+  }
+
+  Future changeTitlte(String label, String newtitulo) async {
+    WriteBatch batch = EcommerceApp.firestore.batch();
+
+    EcommerceApp.firestore
+        .collection(EcommerceApp.collectionUser)
+        .doc(EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
+        .collection("categorias")
+        .get()
+        .then((querySnapshot) {
+      querySnapshot.docs.forEach((productId) {
+        try {
+          if (productId.exists) {
+            batch.update(productId.reference, {label: newtitulo});
+          }
+        } on FormatException catch (error) {
+          print("The document ${error.source} could not be parsed.");
+          return null;
+        }
+      });
+      return batch.commit().then((value) => {
+          db.read().then((value) => {
+          setState(() {
+            docs = value;
+          })
+        }),
+    db.readIDfinal().then((value) => {
+          setState(() {
+            docsid = value;
+          })
+          })
+      });
+    });
+  }
+
+  _mostrarAlertaDatedata(
+      BuildContext context, valueID, String label, String newqty) {
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (context) {
+        return AlertDialog(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20.0)),
+            title: Text("Cantidad"),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                TextButton(
+                  child: Column(
+                    children: [
+                      Text("Do You Want Delete Date?",
+                          style: TextStyle(color: Colors.black)),
+                    ],
+                  ),
+                  onPressed: () {
+                    // _changeValue();
+                    setState(() {});
+                  },
+                ),
+                // FlutterLogo(
+                //   size: 100.0,
+                // )
+              ],
+            ),
+            actions: <Widget>[
+              FlatButton(
+                child: Text("Cancel"),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+              FlatButton(
+                child: Text("Yes, Delete"),
+                onPressed: () {
+                  deleteInfoToFireStore(context, valueID);
+                  Navigator.of(context).pop();
+
                   db.readIDfinal().then((value) => {
                         setState(() {
                           docsid = value;
@@ -662,51 +775,51 @@ class _MyHomePageState extends State<TableTest> {
   }
 
   //Valor para todas las semanas
-  Future changeData(BuildContext context) async {
-    WriteBatch batch = EcommerceApp.firestore.batch();
+  // Future changeData(BuildContext context) async {
+  //   WriteBatch batch = EcommerceApp.firestore.batch();
 
-    EcommerceApp.firestore
-        .collection(EcommerceApp.collectionUser)
-        .doc(EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
-        .collection("date")
-        .get()
-        .then((querySnapshot) {
-      querySnapshot.docs.forEach((productId) {
-        try {
-          if (productId.exists) {
-            batch.update(productId.reference, {"columna2": 800});
-          }
-        } on FormatException catch (error) {
-          print("The document ${error.source} could not be parsed.");
-          return null;
-        }
-      });
-      return batch.commit().then((value) {
-        db.read().then((value) => {
-              setState(() {
-                docs = value;
-              })
-            });
-      });
-    });
-  }
-}
+  //   EcommerceApp.firestore
+  //       .collection(EcommerceApp.collectionUser)
+  //       .doc(EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
+  //       .collection("date")
+  //       .get()
+  //       .then((querySnapshot) {
+  //     querySnapshot.docs.forEach((productId) {
+  //       try {
+  //         if (productId.exists) {
+  //           batch.update(productId.reference, {"columna2": 800});
+  //         }
+  //       } on FormatException catch (error) {
+  //         print("The document ${error.source} could not be parsed.");
+  //         return null;
+  //       }
+  //     });
+  //     return batch.commit().then((value) {
+  //       db.read().then((value) => {
+  //             setState(() {
+  //               docs = value;
+  //             })
+  //           });
+  //     });
+  //   });
+  // }
 
-Widget _nullmenssage() {
-  // DateTime myDateTime = (docs[index]["columna1"].toDate());
-  return InkWell(
-    onTap: () {},
-    child: Container(
-      child: Text(
-        "Cargando...",
-        style: TextStyle(fontWeight: FontWeight.bold),
+  Widget _nullmenssage() {
+    // DateTime myDateTime = (docs[index]["columna1"].toDate());
+    return InkWell(
+      onTap: () {},
+      child: Container(
+        child: Text(
+          "Loading...",
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        width: 100,
+        height: 52,
+        padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
+        alignment: Alignment.centerLeft,
       ),
-      width: 100,
-      height: 52,
-      padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
-      alignment: Alignment.centerLeft,
-    ),
-  );
+    );
+  }
 }
 
 // User user = User();
@@ -848,29 +961,6 @@ class DataBase {
 
 }
 
-Future changeTitlte(String label, String newtitulo) async {
-  WriteBatch batch = EcommerceApp.firestore.batch();
-
-  EcommerceApp.firestore
-      .collection(EcommerceApp.collectionUser)
-      .doc(EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
-      .collection("categorias")
-      .get()
-      .then((querySnapshot) {
-    querySnapshot.docs.forEach((productId) {
-      try {
-        if (productId.exists) {
-          batch.update(productId.reference, {label: newtitulo});
-        }
-      } on FormatException catch (error) {
-        print("The document ${error.source} could not be parsed.");
-        return null;
-      }
-    });
-    return batch.commit();
-  });
-}
-
 // Future addDateData(String label, String newtitulo) async {
 //   WriteBatch batch = EcommerceApp.firestore.batch();
 
@@ -932,7 +1022,7 @@ Future changeTitlte(String label, String newtitulo) async {
 //   });
 // }
 
-Future changeDatabyWeek(
+Future changeDateDatabyWeek(
     BuildContext context, valueID, String label, String newqty) async {
   WriteBatch batch = EcommerceApp.firestore.batch();
 
@@ -945,7 +1035,7 @@ Future changeDatabyWeek(
     querySnapshot.docs.forEach((productId) {
       try {
         if (valueID == productId.id) {
-          batch.update(productId.reference, {label: int.parse(newqty)});
+          batch.update(productId.reference, {label: DateTime.parse(newqty)});
           if (productId != null) {}
         }
       } on FormatException catch (error) {
